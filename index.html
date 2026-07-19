@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wanderlust Bauhaus Poster Maker</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Space Grotesk (Bauhaus Aesthetic) & Noto Sans KR -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Noto Sans KR', 'Space Grotesk', sans-serif;
+            background-color: #F3F0E9; /* Warm Sand Off-white */
+            color: #1A1A1A;
+        }
+        .font-bauhaus {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        /* Bauhaus Accent Colors */
+        .bg-bauhaus-red { background-color: #D33F2E; }
+        .text-bauhaus-red { color: #D33F2E; }
+        .border-bauhaus-red { border-color: #D33F2E; }
+
+        .bg-bauhaus-blue { background-color: #2D5B88; }
+        .text-bauhaus-blue { color: #2D5B88; }
+
+        .bg-bauhaus-yellow { background-color: #E6A123; }
+        .text-bauhaus-yellow { color: #E6A123; }
+
+        /* Bauhaus Grid Frame & Flat Hard Shadows */
+        .bauhaus-card {
+            background-color: #FFFFFF;
+            border: 2px solid #1A1A1A;
+            box-shadow: 4px 4px 0px 0px #1A1A1A;
+            border-radius: 0px; /* Bauhaus classic sharp geometry */
+            transition: all 0.2s ease;
+        }
+        .bauhaus-card:hover {
+            box-shadow: 6px 6px 0px 0px #1A1A1A;
+            transform: translate(-2px, -2px);
+        }
+        .bauhaus-btn {
+            border: 2px solid #1A1A1A;
+            box-shadow: 3px 3px 0px 0px #1A1A1A;
+            border-radius: 0px;
+            transition: all 0.15s ease;
+        }
+        .bauhaus-btn:active {
+            box-shadow: 0px 0px 0px 0px #1A1A1A;
+            transform: translate(3px, 3px);
+        }
+        /* Custom scrollbar matching aesthetic */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F3F0E9;
+            border-left: 2px solid #1A1A1A;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1A1A1A;
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col justify-between">
+
+    <!-- Header Section -->
+    <header class="border-b-2 border-[#1A1A1A] bg-white sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3 cursor-pointer" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+                <div class="w-8 h-8 bg-bauhaus-red border-2 border-[#1A1A1A] flex items-center justify-center text-white font-bold font-bauhaus text-lg">
+                    W
+                </div>
+                <span class="font-bauhaus text-xl font-bold tracking-tight text-[#1A1A1A]">WANDERLUST <span class="text-bauhaus-red font-light">POSTER</span></span>
+            </div>
+            <div class="text-[10px] font-mono tracking-wider text-stone-500 font-bold bg-[#F3F0E9] px-2.5 py-1 border border-[#1A1A1A]">BAUHAUS EDITION</div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-4xl mx-auto px-4 py-10 flex-grow w-full">
+        
+        <!-- Hero Section -->
+        <div class="text-left mb-10 border-b-4 border-[#1A1A1A] pb-8 relative">
+            <div class="absolute right-0 top-0 w-12 h-12 bg-bauhaus-yellow border-2 border-[#1A1A1A] hidden sm:block"></div>
+            <span class="inline-block bg-[#1A1A1A] text-white text-[10px] font-bauhaus tracking-widest font-bold px-3 py-1 uppercase mb-4">
+                Form Follows Emotion
+            </span>
+            <h1 class="text-3xl sm:text-5xl font-bold tracking-tighter text-[#1A1A1A] uppercase font-bauhaus leading-none">
+                Travel Infographics<br>
+                <span class="text-bauhaus-red">In Bauhaus Grid</span>
+            </h1>
+            <p class="mt-4 text-stone-700 text-sm max-w-xl leading-relaxed font-light">
+                가고 싶은 도시의 아우라를 바우하우스 예술 프레임에 담아냅니다. 실시간 여행 팩트 분석과 정교한 인포그래픽, 그리고 인쇄 가능한 감성 포스터를 구워드립니다.
+            </p>
+        </div>
+
+        <!-- API Setup Panel for GitHub Pages -->
+        <div class="bauhaus-card p-6 mb-8 bg-[#FFF9F2] border-bauhaus-yellow">
+            <div class="flex items-center justify-between cursor-pointer" onclick="toggleApiPanel()">
+                <div class="flex items-center gap-3">
+                    <i data-lucide="key" class="w-5 h-5 text-bauhaus-yellow"></i>
+                    <h3 class="text-xs font-bold uppercase tracking-wider font-bauhaus">Gemini API Configuration (안전한 개인 인증키)</h3>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span id="apiStatusBadge" class="bg-[#1A1A1A] text-white text-[9px] px-2 py-0.5 uppercase">데모 모드 활성</span>
+                    <i id="apiChevron" data-lucide="chevron-down" class="w-4 h-4 transition-transform"></i>
+                </div>
+            </div>
+            <div id="apiConfigBody" class="hidden mt-4 pt-4 border-t border-stone-200 space-y-3">
+                <p class="text-[11px] text-stone-600 leading-relaxed">
+                    깃허브 페이지는 서버가 없는 정적 웹 사이트이므로 실시간 포스터를 구우려면 본인의 <strong>Gemini API 키</strong>가 필요합니다. 
+                    입력된 키는 외부에 절대 노출되지 않으며 브라우저 캐시(<span class="font-mono text-stone-800">localStorage</span>)에만 안전하게 보관됩니다. 키가 없어도 <strong>데모 아트워크 굽기</strong>가 정상 동작합니다.
+                </p>
+                <div class="flex gap-2">
+                    <input type="password" id="apiKeyInput" 
+                        class="flex-grow px-3 py-2 text-xs bg-white border-2 border-[#1A1A1A] focus:outline-none" 
+                        placeholder="AIzaSy...로 시작하는 API 키를 입력하세요">
+                    <button onclick="saveApiKey()" class="bauhaus-btn bg-bauhaus-yellow text-white px-4 py-2 text-xs font-bold font-bauhaus uppercase">Save</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Input and style Selector -->
+        <div class="bauhaus-card p-6 sm:p-8 mb-10">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-4 h-4 bg-bauhaus-blue border border-[#1A1A1A]"></div>
+                <h2 class="text-lg font-bold uppercase tracking-tight font-bauhaus">
+                    01. SELECT DESTINATION & STYLE
+                </h2>
+            </div>
+            
+            <div class="space-y-6">
+                <!-- City input field -->
+                <div>
+                    <label class="block text-xs font-bold text-[#1A1A1A] mb-2 uppercase tracking-wider font-bauhaus">Destination / 여행 도시명</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-500">
+                            <i data-lucide="search" class="w-5 h-5 text-[#1A1A1A]"></i>
+                        </div>
+                        <input type="text" id="cityInput" value="파리" 
+                            class="block w-full pl-10 pr-4 py-3 bg-[#F9F8F6] border-2 border-[#1A1A1A] focus:outline-none focus:bg-white font-medium text-sm transition-all" 
+                            placeholder="도시명을 입력하세요 (예: 파리, 교토, 로마 등)">
+                    </div>
+                </div>
+
+                <!-- Poster Style selector -->
+                <div>
+                    <label class="block text-xs font-bold text-[#1A1A1A] mb-3 uppercase tracking-wider font-bauhaus">Illustration Style / 그래픽 테마</label>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="styleSelector">
+                        <button type="button" data-style="Risograph Print" onclick="selectStyle(this)"
+                            class="style-btn bauhaus-btn py-3 px-1.5 text-xs font-bold bg-[#1A1A1A] text-white flex flex-col items-center gap-2">
+                            <i data-lucide="layers" class="w-4 h-4 text-bauhaus-yellow"></i>
+                            <span>리소그라프</span>
+                        </button>
+                        <button type="button" data-style="Cyberpunk Neon" onclick="selectStyle(this)"
+                            class="style-btn bauhaus-btn py-3 px-1.5 text-xs font-bold bg-white text-[#1A1A1A] flex flex-col items-center gap-2">
+                            <i data-lucide="zap" class="w-4 h-4 text-bauhaus-blue"></i>
+                            <span>사이버펑크 네온</span>
+                        </button>
+                        <button type="button" data-style="Retro Vector" onclick="selectStyle(this)"
+                            class="style-btn bauhaus-btn py-3 px-1.5 text-xs font-bold bg-white text-[#1A1A1A] flex flex-col items-center gap-2">
+                            <i data-lucide="palette" class="w-4 h-4 text-bauhaus-red"></i>
+                            <span>레트로 벡터</span>
+                        </button>
+                        <button type="button" data-style="Vintage Watercolor" onclick="selectStyle(this)"
+                            class="style-btn bauhaus-btn py-3 px-1.5 text-xs font-bold bg-white text-[#1A1A1A] flex flex-col items-center gap-2">
+                            <i data-lucide="brush" class="w-4 h-4 text-stone-500"></i>
+                            <span>빈티지 수채화</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Bake Button -->
+                <button type="button" onclick="bakePoster()" id="bakeBtn"
+                    class="w-full bauhaus-btn bg-bauhaus-red text-white hover:bg-red-700 font-bold py-4 px-6 tracking-wider uppercase font-bauhaus flex items-center justify-center gap-2 mt-4 text-sm">
+                    <i data-lucide="sparkles" class="w-4 h-4"></i>
+                    <span id="bakeBtnText">Bake Custom Infographic Poster / 포스터 굽기</span>
+                </button>
+            </div>
+            <!-- Credit on the first page bottom -->
+            <div class="text-right mt-6 border-t border-stone-200 pt-3">
+                <span class="text-[10px] text-stone-500 font-mono tracking-wider font-semibold">‘Mindstream Lab JWY’ 제작</span>
+            </div>
+        </div>
+
+        <!-- Progress checklist -->
+        <div id="loadingSection" class="hidden bauhaus-card p-6 sm:p-8 mb-10 transition-all duration-300">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-3.5 h-3.5 bg-bauhaus-yellow border border-[#1A1A1A] animate-spin"></div>
+                <h3 class="text-sm font-bold text-[#1A1A1A] uppercase tracking-wider font-bauhaus">02. Cooking & Arranging Elements...</h3>
+            </div>
+            <div class="space-y-4">
+                <!-- Step 1 -->
+                <div class="flex items-start gap-4 border-l-2 border-[#1A1A1A] pl-4" id="step1">
+                    <div class="step-icon mt-0.5 w-5 h-5 border-2 border-[#1A1A1A] flex items-center justify-center bg-white text-stone-400 font-mono text-[10px] font-bold">
+                        1
+                    </div>
+                    <div>
+                        <p class="text-xs sm:text-sm font-bold step-text text-stone-500 uppercase tracking-tight">Step 1: Gather Travel Trend Data via Gemini 3</p>
+                        <p class="text-[11px] text-stone-400 mt-0.5 step-subtext">구글 검색을 가동하여 도시의 로컬 라이프 명소 3곳을 엄선 중입니다.</p>
+                    </div>
+                </div>
+                <!-- Step 2 -->
+                <div class="flex items-start gap-4 border-l-2 border-[#1A1A1A] pl-4" id="step2">
+                    <div class="step-icon mt-0.5 w-5 h-5 border-2 border-[#1A1A1A] flex items-center justify-center bg-white text-stone-400 font-mono text-[10px] font-bold">
+                        2
+                    </div>
+                    <div>
+                        <p class="text-xs sm:text-sm font-bold step-text text-stone-500 uppercase tracking-tight">Step 2: Advance Prompt Design & Geometry</p>
+                        <p class="text-[11px] text-stone-400 mt-0.5 step-subtext">바우하우스 그리드 및 선택된 감성 스타일에 맞는 프롬프트를 고도화합니다.</p>
+                    </div>
+                </div>
+                <!-- Step 3 -->
+                <div class="flex items-start gap-4 border-l-2 border-[#1A1A1A] pl-4" id="step3">
+                    <div class="step-icon mt-0.5 w-5 h-5 border-2 border-[#1A1A1A] flex items-center justify-center bg-white text-stone-400 font-mono text-[10px] font-bold">
+                        3
+                    </div>
+                    <div>
+                        <p class="text-xs sm:text-sm font-bold step-text text-stone-500 uppercase tracking-tight">Step 3: Drawing 3:4 Art Poster Image</p>
+                        <p class="text-[11px] text-stone-400 mt-0.5 step-subtext">Gemini 3.1 Flash Image AI 엔진으로 독보적인 아트워크를 렌더링하고 있습니다.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error Notification Toast -->
+        <div id="errorToast" class="hidden mb-10 p-5 bg-white border-2 border-bauhaus-red text-[#1A1A1A] flex items-start gap-4">
+            <i data-lucide="alert-circle" class="w-6 h-6 text-bauhaus-red shrink-0"></i>
+            <div>
+                <h4 class="text-sm font-bold uppercase tracking-wider font-bauhaus">SYSTEM ERROR</h4>
+                <p class="text-xs text-stone-600 mt-1" id="errorMessage">요청 처리 중 문제가 발생했습니다. 다시 구워보세요.</p>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div id="resultSection" class="hidden space-y-10 animate-fade-in">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+                
+                <!-- Left Column: Poster frame in Bauhaus construct -->
+                <div class="md:col-span-5 bauhaus-card p-4 text-center">
+                    <h3 class="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-4 font-bauhaus">FORM / ARTWORK</h3>
+                    
+                    <!-- Poster Frame (Classic 3:4 proportion) -->
+                    <div class="relative bg-stone-100 border-2 border-[#1A1A1A] aspect-[3/4] flex items-center justify-center overflow-hidden">
+                        <img id="posterImage" src="" alt="Custom Poster" class="w-full h-full object-cover">
+                        <!-- Hidden Canvas for generative drawing fallback -->
+                        <canvas id="hiddenDrawingCanvas" width="600" height="800" class="hidden"></canvas>
+                        <!-- Inner Loader -->
+                        <div id="innerImageLoader" class="hidden absolute inset-0 bg-[#F3F0E9]/80 backdrop-blur-sm flex items-center justify-center">
+                            <i data-lucide="loader-2" class="w-8 h-8 text-[#1A1A1A] animate-spin"></i>
+                        </div>
+                    </div>
+
+                    <!-- Action Downloader Button -->
+                    <div class="mt-4">
+                        <button id="downloadBtn" onclick="downloadImage()"
+                            class="w-full bauhaus-btn bg-[#1A1A1A] text-white hover:bg-stone-800 py-3 px-4 flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-wider font-bauhaus">
+                            <i data-lucide="download" class="w-4 h-4 text-bauhaus-yellow"></i>
+                            <span>Download High-Res / 포스터 다운로드</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right Column: City Travel Info Layout (Functional Bauhaus Grid) -->
+                <div class="md:col-span-7 bauhaus-card p-6 sm:p-8">
+                    <div class="flex items-center justify-between gap-2 border-b-2 border-[#1A1A1A] pb-4 mb-4">
+                        <span id="countryLabel" class="text-xs font-bold text-bauhaus-red tracking-widest font-bauhaus uppercase">COUNTRY</span>
+                        <!-- Recommended season badge -->
+                        <span id="seasonBadge" class="bg-bauhaus-blue text-white text-[10px] font-bold px-2.5 py-1 uppercase tracking-wider">
+                            SEASON: -
+                        </span>
+                    </div>
+
+                    <h2 class="text-4xl font-bold text-[#1A1A1A] flex flex-col sm:flex-row sm:items-baseline gap-2">
+                        <span id="cityKoLabel" class="tracking-tight">도시</span>
+                        <span id="cityEnLabel" class="text-stone-400 text-lg font-bauhaus font-medium tracking-widest uppercase">CityEn</span>
+                    </h2>
+
+                    <!-- Quote/Tagline -->
+                    <div class="mt-4 py-3 border-l-4 border-bauhaus-yellow pl-4 bg-[#F9F8F6]">
+                        <p id="cityTagline" class="text-xs sm:text-sm font-medium text-stone-700 italic">"여행지 감성 한마디"</p>
+                    </div>
+
+                    <!-- Spotlight spots -->
+                    <div class="space-y-6 mt-8" id="spotsContainer">
+                        <!-- Dynamic spots go here -->
+                    </div>
+
+                    <div class="border-t-2 border-[#1A1A1A] pt-6 mt-8">
+                        <h4 class="text-xs font-bold text-stone-400 uppercase tracking-widest mb-3 font-bauhaus">DESIGN CHROMATIC PALETTE</h4>
+                        <div class="flex gap-3" id="colorPaletteContainer">
+                            <!-- Dynamic colors go here -->
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Popular Explorations Section -->
+        <div class="mt-12 bauhaus-card p-6 sm:p-8">
+            <h3 class="text-base font-bold text-[#1A1A1A] flex items-center gap-2 mb-6 uppercase tracking-tight font-bauhaus">
+                <div class="w-3 h-3 bg-bauhaus-red"></div> POPULAR EXPLORATIONS / 지금 뜨는 추천 자유 여행지
+            </h3>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <!-- Paris Card -->
+                <div onclick="selectQuickCity('파리')" class="group cursor-pointer border-2 border-[#1A1A1A] bg-[#F9F8F6] hover:bg-white transition-all duration-200">
+                    <div class="h-28 overflow-hidden relative border-b-2 border-[#1A1A1A]">
+                        <img src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=400&q=80" alt="Paris" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                        <div class="absolute inset-0 bg-[#D33F2E]/10 group-hover:bg-transparent transition-all"></div>
+                    </div>
+                    <div class="p-3">
+                        <p class="text-[9px] text-bauhaus-red font-bold uppercase font-bauhaus leading-none">FRANCE</p>
+                        <h4 class="text-sm font-bold mt-1 text-[#1A1A1A] leading-none">파리 (Paris)</h4>
+                    </div>
+                </div>
+
+                <!-- Kyoto Card -->
+                <div onclick="selectQuickCity('교토')" class="group cursor-pointer border-2 border-[#1A1A1A] bg-[#F9F8F6] hover:bg-white transition-all duration-200">
+                    <div class="h-28 overflow-hidden relative border-b-2 border-[#1A1A1A]">
+                        <img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=400&q=80" alt="Kyoto" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                        <div class="absolute inset-0 bg-[#2D5B88]/10 group-hover:bg-transparent transition-all"></div>
+                    </div>
+                    <div class="p-3">
+                        <p class="text-[9px] text-bauhaus-blue font-bold uppercase font-bauhaus leading-none">JAPAN</p>
+                        <h4 class="text-sm font-bold mt-1 text-[#1A1A1A] leading-none">교토 (Kyoto)</h4>
+                    </div>
+                </div>
+
+                <!-- Rome Card -->
+                <div onclick="selectQuickCity('로마')" class="group cursor-pointer border-2 border-[#1A1A1A] bg-[#F9F8F6] hover:bg-white transition-all duration-200">
+                    <div class="h-28 overflow-hidden relative border-b-2 border-[#1A1A1A]">
+                        <img src="https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&w=400&q=80" alt="Rome" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                        <div class="absolute inset-0 bg-[#E6A123]/10 group-hover:bg-transparent transition-all"></div>
+                    </div>
+                    <div class="p-3">
+                        <p class="text-[9px] text-bauhaus-yellow font-bold uppercase font-bauhaus leading-none">ITALY</p>
+                        <h4 class="text-sm font-bold mt-1 text-[#1A1A1A] leading-none">로마 (Rome)</h4>
+                    </div>
+                </div>
+
+                <!-- Bali Card -->
+                <div onclick="selectQuickCity('발리')" class="group cursor-pointer border-2 border-[#1A1A1A] bg-[#F9F8F6] hover:bg-white transition-all duration-200">
+                    <div class="h-28 overflow-hidden relative border-b-2 border-[#1A1A1A]">
+                        <img src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=400&q=80" alt="Bali" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                        <div class="absolute inset-0 bg-[#1A1A1A]/10 group-hover:bg-transparent transition-all"></div>
+                    </div>
+                    <div class="p-3">
+                        <p class="text-[9px] text-stone-500 font-bold uppercase font-bauhaus leading-none">INDONESIA</p>
+                        <h4 class="text-sm font-bold mt-1 text-[#1A1A1A] leading-none">발리 (Bali)</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer Area -->
+    <footer class="bg-[#1A1A1A] text-stone-400 text-xs py-10 border-t-4 border-bauhaus-red mt-20">
+        <div class="max-w-4xl mx-auto px-4 flex flex-col items-center gap-5 text-center">
+            <div class="flex items-center gap-3">
+                <div class="w-7 h-7 bg-white text-[#1A1A1A] font-bold flex items-center justify-center font-bauhaus text-base">
+                    B
+                </div>
+                <span class="font-bauhaus text-sm font-bold text-white tracking-widest">WANDERLUST <span class="text-bauhaus-red">POSTER</span></span>
+            </div>
+            
+            <p class="max-w-md text-stone-500 leading-relaxed text-[11px]">
+                Wanderlust Infographic Poster Maker<br>
+                Copyright © 2026. Powered by Google Gemini 3.1 Flash Image. All rights reserved.
+            </p>
+            
+            <!-- Creator mark -->
+            <div class="text-[11px] text-stone-300 font-mono border-t border-stone-800 pt-4 w-full max-w-xs">
+                ‘Mindstream Lab JWY’ 제작
+            </div>
+
+            <div class="flex items-center gap-4 text-stone-600 text-[10px] uppercase font-bauhaus tracking-wider">
+                <a href="#" class="hover:text-stone-300 transition-colors">Privacy Policy</a>
+                <span>•</span>
+                <a href="#" class="hover:text-stone-300 transition-colors">Terms of Use</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Selected Style State (Default: Risograph)
+        let selectedStyle = "Risograph Print";
+        let generatedBase64Image = "";
+        let isDemoMode = true;
+
+        // On Load: Check if API Key exists
+        window.onload = function() {
+            const savedKey = localStorage.getItem('gemini_api_key');
+            if (savedKey) {
+                document.getElementById('apiKeyInput').value = savedKey;
+                updateApiStatus(true);
+            } else {
+                updateApiStatus(false);
+            }
+        };
+
+        // Toggle configuration panel
+        function toggleApiPanel() {
+            const panel = document.getElementById('apiConfigBody');
+            const chevron = document.getElementById('apiChevron');
+            panel.classList.toggle('hidden');
+            if (panel.classList.contains('hidden')) {
+                chevron.style.transform = "rotate(0deg)";
+            } else {
+                chevron.style.transform = "rotate(180deg)";
+            }
+        }
+
+        // Save API Key locally
+        function saveApiKey() {
+            const key = document.getElementById('apiKeyInput').value.trim();
+            if (key) {
+                localStorage.setItem('gemini_api_key', key);
+                updateApiStatus(true);
+                alert("Gemini API 인증키가 브라우저에 안전하게 저장되었습니다.");
+                toggleApiPanel();
+            } else {
+                localStorage.removeItem('gemini_api_key');
+                updateApiStatus(false);
+                alert("API 인증키가 비어 있습니다. 데모 모드로 자동 전환됩니다.");
+            }
+        }
+
+        function updateApiStatus(hasKey) {
+            const badge = document.getElementById('apiStatusBadge');
+            if (hasKey) {
+                badge.innerText = "Gemini API 활성";
+                badge.className = "bg-bauhaus-blue text-white text-[9px] px-2 py-0.5 uppercase";
+                isDemoMode = false;
+            } else {
+                badge.innerText = "데모 모드 활성";
+                badge.className = "bg-bauhaus-yellow text-[#1A1A1A] text-[9px] px-2 py-0.5 uppercase";
+                isDemoMode = true;
+            }
+        }
+
+        // Function to select style with Bauhaus look & feel
+        function selectStyle(buttonElement) {
+            document.querySelectorAll('.style-btn').forEach(btn => {
+                btn.className = "style-btn bauhaus-btn py-3 px-1.5 text-xs font-bold bg-white text-[#1A1A1A] flex flex-col items-center gap-2";
+            });
+
+            buttonElement.className = "style-btn bauhaus-btn py-3 px-1.5 text-xs font-bold bg-[#1A1A1A] text-white flex flex-col items-center gap-2";
+            selectedStyle = buttonElement.getAttribute('data-style');
+        }
+
+        // Quick select recommended city
+        function selectQuickCity(cityName) {
+            document.getElementById('cityInput').value = cityName;
+            document.getElementById('cityInput').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            const card = document.getElementById('cityInput').closest('.bauhaus-card');
+            card.style.transform = 'translate(-4px, -4px)';
+            card.style.boxShadow = '8px 8px 0px 0px #1A1A1A';
+            setTimeout(() => {
+                card.style.transform = '';
+                card.style.boxShadow = '';
+            }, 800);
+        }
+
+        // Visual loading timeline state mapping
+        function setStepStatus(stepId, status) {
+            const element = document.getElementById(stepId);
+            if (!element) return;
+
+            const iconContainer = element.querySelector('.step-icon');
+            const textElement = element.querySelector('.step-text');
+
+            if (status === 'pending') {
+                iconContainer.className = "step-icon mt-0.5 w-5 h-5 border-2 border-[#1A1A1A] flex items-center justify-center bg-white text-stone-400 font-mono text-[10px] font-bold";
+                iconContainer.innerHTML = stepId.replace('step', '');
+                textElement.className = "text-xs sm:text-sm font-bold step-text text-stone-400 uppercase tracking-tight";
+            } else if (status === 'loading') {
+                iconContainer.className = "step-icon mt-0.5 w-5 h-5 border-2 border-[#1A1A1A] flex items-center justify-center bg-bauhaus-yellow text-[#1A1A1A] font-mono text-[10px] font-bold animate-pulse";
+                iconContainer.innerHTML = '●';
+                textElement.className = "text-xs sm:text-sm font-bold step-text text-[#1A1A1A] uppercase tracking-tight";
+            } else if (status === 'success') {
+                iconContainer.className = "step-icon mt-0.5 w-5 h-5 border-2 border-[#1A1A1A] flex items-center justify-center bg-bauhaus-blue text-white font-mono text-[10px] font-bold";
+                iconContainer.innerHTML = '✓';
+                textElement.className = "text-xs sm:text-sm font-bold step-text text-stone-900 uppercase tracking-tight";
+            }
+        }
+
+        // Main function to "bake" poster via Gemini or Demo Mode
+        async function bakePoster() {
+            const cityName = document.getElementById('cityInput').value.trim();
+            if (!cityName) {
+                showToastError("도시 이름을 정확하게 입력해 주세요.");
+                return;
+            }
+
+            document.getElementById('errorToast').classList.add('hidden');
+            document.getElementById('loadingSection').classList.remove('hidden');
+            document.getElementById('resultSection').classList.add('hidden');
+            document.getElementById('bakeBtn').disabled = true;
+            document.getElementById('bakeBtnText').innerText = "ARRANGING DESIGN ELEMENTS...";
+
+            setStepStatus('step1', 'loading');
+            setStepStatus('step2', 'pending');
+            setStepStatus('step3', 'pending');
+
+            document.getElementById('loadingSection').scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            try {
+                let structuredInfo;
+                let posterBase64;
+
+                if (isDemoMode) {
+                    // DEMO MODE PIPELINE
+                    await sleep(1000);
+                    setStepStatus('step1', 'success');
+                    setStepStatus('step2', 'loading');
+
+                    structuredInfo = generateDemoData(cityName, selectedStyle);
+                    await sleep(1000);
+                    setStepStatus('step2', 'success');
+                    setStepStatus('step3', 'loading');
+
+                    posterBase64 = drawDemoCanvasPoster(cityName, selectedStyle, structuredInfo.palette);
+                    await sleep(800);
+                    setStepStatus('step3', 'success');
+                } else {
+                    // REAL GEMINI API PIPELINE
+                    const apiKey = localStorage.getItem('gemini_api_key');
+                    structuredInfo = await fetchCityInformation(cityName, selectedStyle, apiKey);
+                    setStepStatus('step1', 'success');
+                    setStepStatus('step2', 'loading');
+
+                    const imagePrompt = structuredInfo.imagePrompt;
+                    await sleep(1000);
+                    setStepStatus('step2', 'success');
+                    setStepStatus('step3', 'loading');
+
+                    posterBase64 = await generateArtPoster(imagePrompt, apiKey);
+                    setStepStatus('step3', 'success');
+                }
+
+                generatedBase64Image = posterBase64;
+                renderResultUI(cityName, structuredInfo, posterBase64);
+
+                document.getElementById('resultSection').classList.remove('hidden');
+                document.getElementById('loadingSection').classList.add('hidden');
+                document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+            } catch (error) {
+                console.error("API Pipeline Error:", error);
+                showToastError(error.message || "생성 중 일시적인 오류가 발생했습니다. 데모 모드를 사용하거나 잠시 후 다시 조리해 보세요.");
+            } finally {
+                document.getElementById('bakeBtn').disabled = false;
+                document.getElementById('bakeBtnText').innerText = "Bake Custom Infographic Poster / 포스터 굽기";
+            }
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        // Fetch structured details from Gemini 3
+        async function fetchCityInformation(city, style, apiKey) {
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+            const systemPrompt = `당신은 바우하우스 예술 이념과 현대적 타이포그래피에 통달한 세계적인 가구/디자인 디렉터이자 여행 플래너입니다. 입력받은 도시에 대한 정교한 여행 정보와, 해당 미술 테마(${style})에 최적화된 예술 이미지 생성용 영문 프롬프트를 JSON 규격으로 가공하세요.`;
+            const userQuery = `도시: "${city}", 선택한 포스터 스타일: "${style}". 아래 제공된 JSON Schema 형태에 완벽히 정합되는 여행 데이터와 해당 일러스트 스타일에 부합하는 기하학적 묘사가 살아있는 영어 이미지 생성 프롬프트를 영문으로 설계하십시오.`;
+
+            const jsonSchema = {
+                type: "OBJECT",
+                properties: {
+                    country: { type: "STRING" },
+                    cityEn: { type: "STRING" },
+                    season: { type: "STRING" },
+                    tagline: { type: "STRING" },
+                    spots: {
+                        type: "ARRAY",
+                        items: {
+                            type: "OBJECT",
+                            properties: {
+                                name: { type: "STRING" },
+                                desc: { type: "STRING" },
+                                tip: { type: "STRING" }
+                            },
+                            required: ["name", "desc", "tip"]
+                        }
+                    },
+                    palette: {
+                        type: "ARRAY",
+                        items: { type: "STRING" }
+                    },
+                    imagePrompt: { type: "STRING" }
+                },
+                required: ["country", "cityEn", "season", "tagline", "spots", "palette", "imagePrompt"]
+            };
+
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: jsonSchema
+                },
+                systemInstruction: {
+                    parts: [{ text: systemPrompt }]
+                }
+            };
+
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            if (!response.ok) throw new Error("API 요청에 실패했습니다. API 키를 확인해 주세요.");
+            
+            const result = await response.json();
+            const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
+            return JSON.parse(text);
+        }
+
+        // Generate 3:4 Poster via Gemini 3.1 Image
+        async function generateArtPoster(prompt, apiKey) {
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-image-preview:generateContent?key=${apiKey}`;
+
+            const payload = {
+                contents: [{
+                    role: 'user',
+                    parts: [{ text: prompt }]
+                }],
+                generationConfig: {
+                    responseModalities: ['IMAGE'],
+                    imageConfig: { aspectRatio: "3:4" }
+                }
+            };
+
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            if (!response.ok) throw new Error("이미지 생성 API에 실패했습니다.");
+
+            const result = await response.json();
+            const part = result?.candidates?.[0]?.content?.parts?.find(p => p.inlineData);
+            if (!part || !part.inlineData?.data) {
+                throw new Error("이미지 데이터를 추출하지 못했습니다.");
+            }
+
+            return `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
+        }
+
+        // Local Demo Mode Data Factory
+        function generateDemoData(city, style) {
+            const presets = {
+                "파리": {
+                    country: "FRANCE", cityEn: "PARIS", season: "4월 ~ 6월, 9월 ~ 10월",
+                    tagline: "시간이 멈춘 듯한 파스텔빛 파리, 당신만의 낭만을 기록하다",
+                    spots: [
+                        { name: "생 마르탱 운하 (Canal Saint-Martin)", desc: "에메랄드빛 수로를 따라 현지인처럼 피크닉을 즐기며 여유로운 파리를 만끽하는 코스입니다.", tip: "인근 제과점 'Du Pain et des Idées'에서 빵을 사서 수로 앞에 앉아보세요." },
+                        { name: "마레 지구 (Le Marais)", desc: "중세의 골목과 현대적인 갤러리가 공존하는 파리에서 가장 스타일리시하고 활기찬 예술 지구입니다.", tip: "일요일에도 문을 여는 상점이 많아 주말 산책과 쇼핑 코스로 완벽합니다." },
+                        { name: "프롬나드 플랑테 (Promenade Plantée)", desc: "버려진 고가 철길을 꽃과 나무로 가꾼 세계 최초의 공중 정원에서 이색적인 도심 속 숲을 경험하세요.", tip: "바스티유 광장에서 시작해 조용히 산책하며 도심 속 녹음을 즐기기 좋습니다." }
+                    ],
+                    palette: ["#D33F2E", "#2D5B88", "#E6A123"]
+                },
+                "교토": {
+                    country: "JAPAN", cityEn: "KYOTO", season: "3월 ~ 4월 (벚꽃 시즌)",
+                    tagline: "전통과 현대가 조용히 대화하는 천년의 사찰 도시",
+                    spots: [
+                        { name: "기온 폰토초 골목", desc: "고즈넉한 등불과 오래된 목조 가옥이 자아내는 교토 특유의 밤을 오롯이 걷는 시간.", tip: "오후 6시 전후로 방문하면 가모가와강 산책과 연동하기 아주 편리합니다." },
+                        { name: "아라시야마 치쿠린", desc: "하늘로 높게 솟은 대나무 숲을 가로지르며 바람 소리에 정신을 맡기는 고유의 힐링 명소.", tip: "이른 아침에 방문해 한적한 정취를 만끽하는 것을 적극 추천합니다." }
+                    ],
+                    palette: ["#1B3B2B", "#E6A123", "#C24D38"]
+                }
+            };
+
+            const query = city.trim();
+            if (presets[query]) return presets[query];
+
+            // Default fallback for general queries
+            return {
+                country: "EXPLORATION",
+                cityEn: query.toUpperCase(),
+                season: "ALL SEASONS",
+                tagline: `미지의 영역 "${query}"를 바우하우스 가치관으로 단순화하다.`,
+                spots: [
+                    { name: "로컬 헤리티지 센터", desc: "지역의 숨결과 역사가 함축되어 설계된 가장 독특한 아카이브 공간입니다.", tip: "기념품 숍 옆의 독립적인 기획 전시 부스를 꼭 챙겨보세요." },
+                    { name: "컨템포러리 건축 거리", desc: "미니멀리즘과 실용주의 철학이 오롯이 드러나는 현대적인 정취를 탐방해 보세요.", tip: "조명이 켜지는 오후 7시 이후에 사진을 담으면 더욱 세련되게 나옵니다." }
+                ],
+                palette: ["#D33F2E", "#2D5B88", "#E6A123"]
+            };
+        }
+
+        // Generative Drawing Engine on Canvas (CORS-safe Base64 Generator)
+        function drawDemoCanvasPoster(city, style, palette) {
+            const canvas = document.getElementById('hiddenDrawingCanvas');
+            const ctx = canvas.getContext('2d');
+            const p = palette || ["#D33F2E", "#2D5B88", "#E6A123"];
+
+            // 1. Background Fill (Warm Bauhaus Sand)
+            ctx.fillStyle = "#F3F0E9";
+            ctx.fillRect(0, 0, 600, 800);
+
+            // 2. Structural Bauhaus Border Layout
+            ctx.strokeStyle = "#1A1A1A";
+            ctx.lineWidth = 12;
+            ctx.strokeRect(6, 6, 588, 788);
+
+            // 3. Grid line layout
+            ctx.beginPath();
+            ctx.moveTo(300, 0);
+            ctx.lineTo(300, 800);
+            ctx.moveTo(0, 450);
+            ctx.lineTo(600, 450);
+            ctx.strokeStyle = "rgba(26,26,26,0.15)";
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // 4. Style-specific Generative Abstract Art
+            if (style === "Risograph Print") {
+                // Large overlapping offset circles with grain simulation
+                ctx.globalAlpha = 0.85;
+                ctx.fillStyle = p[0];
+                ctx.beginPath();
+                ctx.arc(220, 260, 130, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = p[1];
+                ctx.beginPath();
+                ctx.arc(380, 310, 110, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = p[2];
+                ctx.beginPath();
+                ctx.arc(290, 180, 80, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Abstract lines
+                ctx.globalAlpha = 1.0;
+                ctx.strokeStyle = "#1A1A1A";
+                ctx.lineWidth = 4;
+                ctx.beginPath();
+                ctx.moveTo(100, 410);
+                ctx.lineTo(500, 410);
+                ctx.stroke();
+
+                // Grain Noise Simulation
+                const imgData = ctx.getImageData(12, 12, 576, 776);
+                const data = imgData.data;
+                for (let i = 0; i < data.length; i += 4) {
+                    const noise = (Math.random() - 0.5) * 22;
+                    data[i] = Math.min(255, Math.max(0, data[i] + noise));
+                    data[i+1] = Math.min(255, Math.max(0, data[i+1] + noise));
+                    data[i+2] = Math.min(255, Math.max(0, data[i+2] + noise));
+                }
+                ctx.putImageData(imgData, 12, 12);
+
+            } else if (style === "Cyberpunk Neon") {
+                // Dark background
+                ctx.fillStyle = "#121214";
+                ctx.fillRect(12, 12, 576, 776);
+
+                // Glowing Neon lines
+                ctx.shadowColor = "#FF007F";
+                ctx.shadowBlur = 15;
+                ctx.strokeStyle = "#FF007F";
+                ctx.lineWidth = 5;
+                
+                // Draw digital grid perspective
+                for(let i=0; i<10; i++) {
+                    ctx.beginPath();
+                    ctx.moveTo(12 + i*57, 450);
+                    ctx.lineTo(12 + i*65 - 30, 788);
+                    ctx.stroke();
+                }
+
+                ctx.shadowColor = "#00FFFF";
+                ctx.shadowBlur = 15;
+                ctx.fillStyle = "#00FFFF";
+                ctx.beginPath();
+                ctx.arc(300, 240, 90, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Reset Shadow
+                ctx.shadowBlur = 0;
+
+            } else if (style === "Retro Vector") {
+                // Mountain & Sunrise flat layout
+                ctx.fillStyle = p[2]; // Yellow Sun
+                ctx.beginPath();
+                ctx.arc(300, 320, 140, 0, Math.PI, true);
+                ctx.fill();
+
+                // Triangular mountains
+                ctx.fillStyle = p[0]; // Red
+                ctx.beginPath();
+                ctx.moveTo(100, 450);
+                ctx.lineTo(300, 180);
+                ctx.lineTo(500, 450);
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.fillStyle = "rgba(26,26,26,0.85)"; // Black accent
+                ctx.beginPath();
+                ctx.moveTo(250, 450);
+                ctx.lineTo(400, 260);
+                ctx.lineTo(550, 450);
+                ctx.closePath();
+                ctx.fill();
+
+            } else { // Vintage Watercolor
+                // Soft gradient washes
+                const grad = ctx.createRadialGradient(300, 260, 40, 300, 260, 250);
+                grad.addColorStop(0, p[1]);
+                grad.addColorStop(0.5, p[2]);
+                grad.addColorStop(1, "#F3F0E9");
+                
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.arc(300, 260, 220, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Decorative hand-drawn minimal frames
+                ctx.strokeStyle = "rgba(26,26,26,0.4)";
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.arc(300, 260, 120, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+
+            // 5. Typography block (Bauhaus aligned text on Canvas)
+            ctx.fillStyle = style === "Cyberpunk Neon" ? "#FFFFFF" : "#1A1A1A";
+            ctx.textAlign = "center";
+
+            // City Title (Heavy typography)
+            ctx.font = "900 64px 'Space Grotesk', 'Noto Sans KR', sans-serif";
+            ctx.fillText(city.toUpperCase(), 300, 560);
+
+            // Subtitle
+            ctx.font = "bold 14px 'Space Grotesk', sans-serif";
+            ctx.fillStyle = style === "Cyberpunk Neon" ? "#00FFFF" : p[0];
+            ctx.letterSpacing = "6px";
+            ctx.fillText("FORM FOLLOWS EMOTION", 300, 610);
+            ctx.letterSpacing = "0px";
+
+            // Footer specs
+            ctx.fillStyle = style === "Cyberpunk Neon" ? "rgba(255,255,255,0.4)" : "rgba(26,26,26,0.5)";
+            ctx.font = "500 11px 'Space Grotesk', sans-serif";
+            ctx.fillText(`MINDSTREAM LAB JWY  //  ${style.toUpperCase()}`, 300, 720);
+
+            // Decorative bottom block
+            ctx.fillStyle = style === "Cyberpunk Neon" ? "#00FFFF" : p[0];
+            ctx.fillRect(250, 740, 100, 4);
+
+            return canvas.toDataURL('image/png');
+        }
+
+        // Render results onto user viewport
+        function renderResultUI(cityName, data, base64Image) {
+            document.getElementById('countryLabel').innerText = data.country || "WANDERLUST";
+            document.getElementById('seasonBadge').innerText = `SEASON: ${data.season || '-'}`;
+            document.getElementById('cityKoLabel').innerText = cityName;
+            document.getElementById('cityEnLabel').innerText = data.cityEn || "";
+            document.getElementById('cityTagline').innerText = `"${data.tagline || '디자인은 단순한 형태가 아닌, 삶에 대한 통찰이다.'}"`;
+
+            // Render Dynamic Spot Cards in Bauhaus Grids
+            const spotsContainer = document.getElementById('spotsContainer');
+            spotsContainer.innerHTML = ''; 
+
+            if (data.spots && Array.isArray(data.spots)) {
+                data.spots.forEach((spot, index) => {
+                    const spotCard = document.createElement('div');
+                    spotCard.className = "border-t border-[#1A1A1A] pt-4 mt-4 space-y-2.5";
+                    spotCard.innerHTML = `
+                        <div class="flex items-center gap-3">
+                            <span class="w-5 h-5 bg-[#1A1A1A] text-white font-mono font-bold flex items-center justify-center text-[10px]">${index + 1}</span>
+                            <h4 class="font-bold text-[#1A1A1A] text-sm uppercase tracking-tight">${spot.name}</h4>
+                        </div>
+                        <p class="text-xs text-stone-600 leading-relaxed pl-8">${spot.desc}</p>
+                        <div class="bg-[#F9F8F6] p-3 border-l-2 border-bauhaus-red flex items-start gap-2 text-[11px] text-stone-500 ml-8">
+                            <i data-lucide="lightbulb" class="w-3.5 h-3.5 text-bauhaus-yellow shrink-0 mt-0.5"></i>
+                            <p class="leading-relaxed"><strong class="text-[#1A1A1A] uppercase tracking-wide">Design Hint:</strong> ${spot.tip}</p>
+                        </div>
+                    `;
+                    spotsContainer.appendChild(spotCard);
+                });
+            }
+
+            // Render Palette Color dots
+            const paletteContainer = document.getElementById('colorPaletteContainer');
+            paletteContainer.innerHTML = ''; 
+            
+            if (data.palette && Array.isArray(data.palette)) {
+                data.palette.forEach(color => {
+                    const colorCircle = document.createElement('div');
+                    colorCircle.className = "w-10 h-10 border-2 border-[#1A1A1A] transition-transform duration-200 hover:scale-105 cursor-pointer flex items-center justify-center group relative";
+                    colorCircle.style.backgroundColor = color;
+                    colorCircle.setAttribute('title', color);
+                    colorCircle.innerHTML = `
+                        <span class="opacity-0 group-hover:opacity-100 absolute -top-8 bg-stone-900 text-white text-[10px] px-1.5 py-0.5 shadow-md whitespace-nowrap z-10 transition-all font-mono font-bold">${color}</span>
+                    `;
+                    paletteContainer.appendChild(colorCircle);
+                });
+            }
+
+            // Assign Image Base64 to image element
+            document.getElementById('posterImage').src = base64Image;
+
+            // Re-render Lucide icons inside newly added elements
+            lucide.createIcons();
+        }
+
+        // Display in-app notifications
+        function showToastError(message) {
+            document.getElementById('loadingSection').classList.add('hidden');
+            document.getElementById('resultSection').classList.add('hidden');
+            
+            const toast = document.getElementById('errorToast');
+            const toastMessage = document.getElementById('errorMessage');
+            toastMessage.innerText = message;
+            toast.classList.remove('hidden');
+            toast.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        // Custom local downloader utilizing Blobs for maximum GitHub Pages compatibility
+        function downloadImage() {
+            if (!generatedBase64Image) return;
+            
+            try {
+                const cityName = document.getElementById('cityInput').value.trim() || "Wanderlust";
+                const filename = `${cityName}_${selectedStyle.replace(' ', '_')}_BauhausPoster.png`;
+                
+                // Robust Base64 to Blob conversion
+                const parts = generatedBase64Image.split(';base64,');
+                const contentType = parts[0].split(':')[1] || 'image/png';
+                const raw = window.atob(parts[1] || parts[0]);
+                const rawLength = raw.length;
+                const uInt8Array = new Uint8Array(rawLength);
+                
+                for (let i = 0; i < rawLength; ++i) {
+                    uInt8Array[i] = raw.charCodeAt(i);
+                }
+                
+                const blob = new Blob([uInt8Array], { type: contentType });
+                const blobUrl = URL.createObjectURL(blob);
+                
+                // Create simulation link for standard browser download
+                const downloadLink = document.createElement("a");
+                downloadLink.href = blobUrl;
+                downloadLink.download = filename;
+                
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                
+                // Cleanup resource memory
+                setTimeout(() => {
+                    document.body.removeChild(downloadLink);
+                    URL.revokeObjectURL(blobUrl);
+                }, 100);
+                
+            } catch (err) {
+                console.error("Download handling failed:", err);
+                // Fallback attempt: Standard data URI navigation
+                const fallbackLink = document.createElement("a");
+                fallbackLink.href = generatedBase64Image;
+                fallbackLink.download = "Poster.png";
+                document.body.appendChild(fallbackLink);
+                fallbackLink.click();
+                document.body.removeChild(fallbackLink);
+            }
+        }
+    </script>
+</body>
+</html>
