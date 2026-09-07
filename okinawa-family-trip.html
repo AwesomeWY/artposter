@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root{color-scheme:light dark}
+  body{margin:0}
+  img{max-width:100%}
+  [hidden]{display:none!important}
+</style>
+<title>오키나와 저속 여행</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>
+:root{
+  --ground:#EFF3F4;
+  --surface:#FFFFFF;
+  --surface-2:#E4EBEC;
+  --ink:#132329;
+  --ink-2:#4A6068;
+  --ink-3:#7B9098;
+  --rule:#C9D6D9;
+  --sea:#0E7C86;
+  --sea-soft:#DCEEEF;
+  --tile:#C0442A;
+  --tile-soft:#F6E2DD;
+  --shadow:0 1px 2px rgba(19,35,41,.06), 0 8px 24px -16px rgba(19,35,41,.28);
+  --maxw:74ch;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#0D181C;
+    --surface:#14242A;
+    --surface-2:#1C3138;
+    --ink:#E7EFF0;
+    --ink-2:#A8BDC2;
+    --ink-3:#7B9298;
+    --rule:#2A424A;
+    --sea:#5FD0D6;
+    --sea-soft:#153A3E;
+    --tile:#F0866B;
+    --tile-soft:#3A2019;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.8);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0D181C;
+  --surface:#14242A;
+  --surface-2:#1C3138;
+  --ink:#E7EFF0;
+  --ink-2:#A8BDC2;
+  --ink-3:#7B9298;
+  --rule:#2A424A;
+  --sea:#5FD0D6;
+  --sea-soft:#153A3E;
+  --tile:#F0866B;
+  --tile-soft:#3A2019;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.8);
+}
+
+*{box-sizing:border-box}
+body{
+  background:var(--ground);
+  color:var(--ink);
+  font-family:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  font-size:16px;
+  line-height:1.75;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:clamp(28px,5vw,64px) clamp(18px,4vw,32px) 96px;}
+h1,h2,h3{font-family:"Gowun Batang","Nanum Myeongjo",Georgia,serif;text-wrap:balance;margin:0;}
+.num{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums;}
+
+/* ── 머리말 ───────────────────────── */
+.masthead{border-bottom:2px solid var(--ink);padding-bottom:20px;margin-bottom:8px}
+.eyebrow{
+  font-size:.72rem;font-weight:700;letter-spacing:.18em;color:var(--sea);
+  text-transform:uppercase;margin:0 0 14px;
+}
+h1{font-size:clamp(2.1rem,6.5vw,3.1rem);font-weight:700;line-height:1.2;letter-spacing:-.01em}
+.dek{color:var(--ink-2);font-size:1.02rem;margin:14px 0 0;max-width:56ch}
+.stamp{
+  display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:20px;
+  font-size:.8rem;color:var(--ink-3);
+}
+.stamp b{color:var(--ink-2);font-weight:500}
+
+/* ── 섹션 ───────────────────────── */
+section{margin-top:56px}
+.sec-label{
+  font-size:.72rem;font-weight:700;letter-spacing:.16em;color:var(--ink-3);
+  text-transform:uppercase;margin:0 0 10px;
+}
+h2{font-size:1.55rem;font-weight:700;line-height:1.3}
+.sec-note{color:var(--ink-2);font-size:.94rem;margin:8px 0 0}
+
+/* ── 전제 ───────────────────────── */
+.premise{
+  background:var(--surface);border-left:3px solid var(--tile);
+  padding:20px 24px;margin-top:20px;box-shadow:var(--shadow);
+}
+.premise ul{margin:0;padding-left:1.1em}
+.premise li{margin:.45em 0;color:var(--ink-2);font-size:.94rem}
+.premise li b{color:var(--ink);font-weight:700}
+
+/* ── 하루 ───────────────────────── */
+.day{
+  background:var(--surface);box-shadow:var(--shadow);
+  margin-top:22px;padding:24px clamp(18px,3.5vw,28px) 26px;
+}
+.day-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;
+  border-bottom:1px solid var(--rule);padding-bottom:14px;margin-bottom:6px}
+.day-no{
+  font-family:"Gowun Batang",serif;font-size:2.3rem;font-weight:700;
+  color:var(--sea);line-height:1;letter-spacing:-.02em;
+}
+.day-title{font-size:1.18rem;font-weight:700;font-family:"Gowun Batang",serif}
+.day-meta{margin-left:auto;font-size:.78rem;color:var(--ink-3);text-align:right}
+
+.stops{list-style:none;margin:0;padding:0}
+.stop{padding:18px 0;border-bottom:1px dashed var(--rule)}
+.stop:last-child{border-bottom:0;padding-bottom:4px}
+.stop-top{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.pin{
+  font-size:.72rem;font-weight:700;color:var(--sea);background:var(--sea-soft);
+  padding:2px 8px;border-radius:2px;letter-spacing:.04em;white-space:nowrap;
+}
+.stop-name{font-weight:700;font-size:1.04rem}
+.clock{margin-left:auto;font-size:.8rem;color:var(--ink-3)}
+.stop p{margin:8px 0 0;color:var(--ink-2);font-size:.94rem}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chip{
+  font-size:.72rem;padding:3px 9px;border:1px solid var(--rule);
+  color:var(--ink-2);border-radius:99px;white-space:nowrap;
+}
+.chip.walk{border-color:var(--sea);color:var(--sea)}
+.chip.cost{border-color:var(--rule);color:var(--ink-2)}
+.drive{
+  font-size:.8rem;color:var(--ink-3);padding:10px 0 0;
+  display:flex;align-items:center;gap:8px;
+}
+.drive::before{content:"";flex:0 0 22px;height:1px;background:var(--rule)}
+
+/* ── 예산 영수증 ───────────────────────── */
+.receipt{
+  background:var(--surface);box-shadow:var(--shadow);margin-top:20px;
+  padding:24px clamp(18px,3.5vw,28px);
+}
+.receipt-rows{list-style:none;margin:0;padding:0}
+.row{display:flex;align-items:baseline;gap:8px;padding:9px 0;font-size:.94rem}
+.row .what{color:var(--ink);flex:0 1 auto}
+.row .sub{color:var(--ink-3);font-size:.8rem;margin-left:6px}
+.row .lead{flex:1 1 24px;min-width:16px;border-bottom:1px dotted var(--rule);transform:translateY(-.3em)}
+.row .yen{color:var(--ink-3);font-size:.84rem;white-space:nowrap}
+.row .won{color:var(--ink);font-weight:600;white-space:nowrap;min-width:5.6em;text-align:right}
+.row.total{
+  border-top:2px solid var(--ink);margin-top:10px;padding-top:14px;font-size:1.05rem;
+}
+.row.total .what{font-weight:700}
+.row.total .won{color:var(--tile);font-weight:600;font-size:1.15rem}
+.receipt-note{margin:16px 0 0;font-size:.84rem;color:var(--ink-3);line-height:1.7}
+
+/* ── 절감/리스크 ───────────────────────── */
+.levers,.risks{list-style:none;margin:18px 0 0;padding:0}
+.levers li,.risks li{
+  padding:12px 0 12px 26px;border-bottom:1px solid var(--rule);
+  font-size:.94rem;color:var(--ink-2);position:relative;
+}
+.levers li:last-child,.risks li:last-child{border-bottom:0}
+.levers li::before{
+  content:"−";position:absolute;left:0;top:12px;color:var(--sea);
+  font-weight:700;font-family:"IBM Plex Mono",monospace;
+}
+.risks li::before{
+  content:"!";position:absolute;left:2px;top:12px;color:var(--tile);
+  font-weight:700;font-family:"IBM Plex Mono",monospace;
+}
+.levers li b,.risks li b{color:var(--ink);font-weight:700}
+.save{color:var(--sea);font-weight:600;white-space:nowrap}
+
+.callout{
+  background:var(--tile-soft);padding:18px 22px;margin-top:20px;
+  border-left:3px solid var(--tile);font-size:.92rem;color:var(--ink-2);
+}
+.callout b{color:var(--ink)}
+.callout p{margin:0}
+.callout p + p{margin-top:10px}
+
+footer{
+  margin-top:64px;padding-top:22px;border-top:1px solid var(--rule);
+  font-size:.8rem;color:var(--ink-3);line-height:1.9;
+}
+footer a{color:var(--sea);text-decoration:none;border-bottom:1px solid var(--rule)}
+footer a:hover,footer a:focus-visible{border-bottom-color:var(--sea)}
+a:focus-visible,.chip:focus-visible{outline:2px solid var(--sea);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (max-width:520px){
+  .day-meta{margin-left:0;text-align:left;width:100%}
+  .clock{margin-left:0;width:100%}
+  .row .won{min-width:4.8em}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<header class="masthead">
+  <p class="eyebrow">3박 4일 · 4인 가족 · 렌터카 이동</p>
+  <h1>오키나와 저속 여행</h1>
+  <p class="dek">하루 세 곳까지만. 주차장에서 목적지까지 도보 5분을 넘기지 않는 동선으로 짠 4인 가족 일정과 현지 경비 120만 원 배분표.</p>
+  <div class="stamp">
+    <span><b>인원</b> 부부 2 · 고등학생 1 · 초등학생 1</span>
+    <span><b>시기</b> 11월 중순(태풍기 종료·비수기)</span>
+    <span><b>환율</b> <span class="num">100엔 ≈ 862원</span></span>
+  </div>
+</header>
+
+<section>
+  <p class="sec-label">먼저 확인할 전제</p>
+  <h2>예산 120만 원은 &lsquo;현지 경비&rsquo; 기준입니다</h2>
+  <p class="sec-note">항공권까지 포함해 총액 120만 원을 맞추는 건 4인 가족 기준으로 현실성이 낮습니다. 아래 근거와 대안을 함께 적었습니다.</p>
+  <div class="premise">
+    <ul>
+      <li><b>항공권은 별도</b> — 인천–나하 왕복 LCC 최저가가 1인 약 17만~27만 원대라, 4인이면 <span class="num">70만~100만 원</span>이 항공권만으로 소요됩니다.</li>
+      <li><b>120만 원의 사용처</b> — 숙박·렌터카·유류·식비·입장료·통신. 즉 <b>총 여행비는 190만~220만 원</b>으로 잡으셔야 합니다.</li>
+      <li><b>렌터카는 선택이 아니라 전제</b> — &lsquo;걷기 최소화&rsquo; 조건에서 버스·모노레일 이동은 도보량을 오히려 늘립니다.</li>
+      <li><b>환산 기준</b> — 계산은 <span class="num">1엔 = 8.7원</span>(환전 수수료 포함 보수적 적용). 2026-09-04 매매기준율 100엔 = 864.62원.</li>
+      <li><b>총액 120만 원을 꼭 지켜야 한다면</b> — 항공 특가 4인 70만 원 확보 + 렌터카 2일로 축소 + 저녁 3회 중 2회 마트·푸드코트가 최소 조건입니다. 일정은 아래에서 두 곳을 덜어내면 됩니다.</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <p class="sec-label">일정</p>
+  <h2>날짜별 동선</h2>
+  <p class="sec-note">각 항목의 &lsquo;도보&rsquo; 표시는 주차 지점에서 관람 시작점까지의 실제 걷는 거리입니다.</p>
+
+  <article class="day">
+    <div class="day-head">
+      <span class="day-no num">1</span>
+      <span class="day-title">도착 · 서해안에 짐 풀기</span>
+      <span class="day-meta">나하공항 → 차탄<br>운전 약 45분 · 30km</span>
+    </div>
+    <ul class="stops">
+      <li class="stop">
+        <div class="stop-top"><span class="pin">1곳</span><span class="stop-name">아시비나 아울렛</span><span class="clock">15:30 – 17:00</span></div>
+        <p>공항에서 차로 15분. 렌터카 인수 직후 첫 정차지로 두면 시차 없는 도착일을 무리 없이 채웁니다. 전 구간 평지 실내, 대형 무료 주차장이 매장 바로 앞입니다. 고등학생 쇼핑 욕구를 첫날 소화시켜 두면 남은 사흘 동선이 가벼워집니다.</p>
+        <div class="chips"><span class="chip walk">도보 2분</span><span class="chip">실내</span><span class="chip cost">입장 무료</span></div>
+      </li>
+      <li class="stop">
+        <div class="stop-top"><span class="pin">2곳</span><span class="stop-name">숙소 체크인 — 차탄 미하마</span><span class="clock">17:30</span></div>
+        <p>3박 모두 같은 숙소로 고정합니다. 짐 재포장이 없다는 것만으로 가족 여행의 체감 피로가 크게 줄고, 콘도형 4인 1실을 잡으면 아침을 방에서 해결해 식비도 함께 내려갑니다.</p>
+        <div class="chips"><span class="chip walk">주차 지하·전용</span><span class="chip">4인 1실 · 조식 포함</span><span class="chip cost">¥12,000 / 박</span></div>
+      </li>
+      <li class="stop">
+        <div class="stop-top"><span class="pin">3곳</span><span class="stop-name">아메리칸 빌리지 · 선셋 저녁</span><span class="clock">18:00 – 21:00</span></div>
+        <p>숙소에서 도보 5분권. 이날만큼은 차를 세워두고 움직입니다. 관람차와 해변 산책로, 타코라이스·햄버거 가게가 한 블록에 모여 있어 초등·고등 취향이 갈려도 각자 흩어졌다 모이기 쉽습니다.</p>
+        <div class="chips"><span class="chip walk">도보 5분(숙소)</span><span class="chip">야외 · 평지</span><span class="chip cost">저녁 ¥8,000 내외</span></div>
+      </li>
+    </ul>
+  </article>
+
+  <article class="day">
+    <div class="day-head">
+      <span class="day-no num">2</span>
+      <span class="day-title">북부 · 하루를 바다에 쓰는 날</span>
+      <span class="day-meta">차탄 ⇄ 모토부<br>왕복 약 180km · 운전 3시간 20분</span>
+    </div>
+    <ul class="stops">
+      <li class="stop">
+        <div class="stop-top"><span class="pin">1곳</span><span class="stop-name">츄라우미 수족관</span><span class="clock">09:30 – 13:00</span></div>
+        <p>이번 여행의 중심. 오전 8시 출발해 개장 직후에 들어가면 고래상어 수조 앞자리를 잡을 수 있습니다. <b>북문(P7) 주차장</b>을 쓰면 수족관 입구까지 내리막 도보 3분, 남문에서 걸어 올라오는 경로를 피할 수 있습니다. 관람은 위층에서 아래로 내려오는 한 방향 동선이라 되돌아 걷지 않습니다.</p>
+        <div class="chips"><span class="chip walk">도보 3분 · 내리막</span><span class="chip">전관 실내</span><span class="chip cost">4인 ¥6,510</span></div>
+      </li>
+      <li class="stop">
+        <div class="stop-top"><span class="pin">2곳</span><span class="stop-name">코우리 대교 · 코우리 오션타워</span><span class="clock">14:00 – 15:30</span></div>
+        <p>수족관에서 차로 40분. 대교 위 2km 구간 자체가 드라이브 명소라 내리지 않아도 절반은 본 셈입니다. 오션타워는 주차장에서 전망대 입구까지 <b>자동운전 카트</b>가 태워 올라가고, 그 다음은 엘리베이터입니다. 오르막을 걷는 구간이 사실상 없습니다.</p>
+        <div class="chips"><span class="chip walk">도보 0분 · 카트</span><span class="chip">전망 · 실내외</span><span class="chip cost">4인 ¥3,500 내외</span></div>
+      </li>
+      <li class="stop">
+        <div class="stop-top"><span class="pin">3곳</span><span class="stop-name">나고 시내 저녁 — 아구 돼지 샤브</span><span class="clock">17:00 – 18:30</span></div>
+        <p>돌아오는 길목에서 먹고 출발해야 합니다. 차탄까지 야간 운전 1시간 20분이 남아 있으니, 숙소 도착 후 저녁을 찾는 순서는 피하세요. 주차 있는 로드사이드 식당으로 잡습니다.</p>
+        <div class="chips"><span class="chip walk">도보 1분</span><span class="chip cost">4인 ¥10,000 내외</span></div>
+      </li>
+    </ul>
+    <p class="drive">고속도로(오키나와 자동차도) 이용 시 편도 톨 약 ¥1,000, 왕복 시간이 40분 단축됩니다.</p>
+  </article>
+
+  <article class="day">
+    <div class="day-head">
+      <span class="day-no num">3</span>
+      <span class="day-title">중부 · 물속을 젖지 않고 보는 날</span>
+      <span class="day-meta">차탄 ⇄ 온나·나고<br>왕복 약 100km · 운전 2시간</span>
+    </div>
+    <ul class="stops">
+      <li class="stop">
+        <div class="stop-top"><span class="pin">1곳</span><span class="stop-name">부세나 해중 전망탑 + 글래스보트</span><span class="clock">10:00 – 11:30</span></div>
+        <p>11월 오키나와 수온은 23~25도, 아이들과 물에 들어가긴 애매한 시기입니다. 대신 바닷속을 봅니다. 주차장에서 전망탑까지 <b>무료 셔틀</b>이 왕복하고, 전망탑 내부는 나선 계단이지만 짧습니다. 글래스보트를 묶은 세트권이 개별 구매보다 저렴합니다.</p>
+        <div class="chips"><span class="chip walk">도보 2분 · 셔틀</span><span class="chip">해중 · 승선</span><span class="chip cost">4인 세트 ¥7,000 내외</span></div>
+      </li>
+      <li class="stop">
+        <div class="stop-top"><span class="pin">2곳</span><span class="stop-name">나고 파인애플 파크</span><span class="clock">12:30 – 14:00</span></div>
+        <p>정원 관람 전 구간을 <b>무인 자동운전 카트</b>가 돕니다. 걷는 거리가 사실상 0에 수렴하는, 이 조건에 가장 잘 맞는 시설입니다. 시식·시음 코너와 파인애플 젤라또가 있어 초등 아이는 물론 고등학생도 지루해하지 않습니다. 점심은 파크 내 카페로 해결해 이동을 하나 줄입니다.</p>
+        <div class="chips"><span class="chip walk">도보 0분 · 카트</span><span class="chip">실내외 · 시식</span><span class="chip cost">4인 ¥4,000 내외</span></div>
+      </li>
+      <li class="stop">
+        <div class="stop-top"><span class="pin">3곳</span><span class="stop-name">이온몰 오키나와 라이카무</span><span class="clock">16:00 – 20:00</span></div>
+        <p>돌아오는 길에 있는 오키나와 최대 실내몰. 몰 한가운데 <b>무료 대형 아쿠아리움</b>이 있어 셋째 날 관람 갈증도 해결됩니다. 푸드코트 저녁 + 기념품 + 다음 날 공항에서 살 것들 미리 구매까지 한 지붕 안에서 끝납니다. 온도 조절되는 실내라 넷의 체력 차이도 문제가 되지 않습니다.</p>
+        <div class="chips"><span class="chip walk">도보 3분 · 실내 주차</span><span class="chip">쇼핑 · 푸드코트</span><span class="chip cost">저녁 ¥6,000 내외</span></div>
+      </li>
+    </ul>
+  </article>
+
+  <article class="day">
+    <div class="day-head">
+      <span class="day-no num">4</span>
+      <span class="day-title">귀국 · 두 곳만</span>
+      <span class="day-meta">차탄 → 나하공항<br>약 30km · 운전 45분</span>
+    </div>
+    <ul class="stops">
+      <li class="stop">
+        <div class="stop-top"><span class="pin">1곳</span><span class="stop-name">세나가지마 우미카지 테라스</span><span class="clock">10:30 – 12:30</span></div>
+        <p>공항에서 차로 10분 거리의 흰 계단식 상가. 마지막 날 짐을 실은 채 들르기 좋은 유일한 위치입니다. 다만 <b>경사 지형</b>이라 반드시 <b>위쪽 주차장</b>에 대고 내려가며 보세요. 아래에 대면 올라오는 계단을 다시 밟아야 합니다. 바다 보이는 카페에서 점심 겸 마무리.</p>
+        <div class="chips"><span class="chip walk">도보 5분 · 내리막</span><span class="chip">야외 · 경사 주의</span><span class="chip cost">점심 ¥6,000 내외</span></div>
+      </li>
+      <li class="stop">
+        <div class="stop-top"><span class="pin">2곳</span><span class="stop-name">렌터카 반납 → 나하공항</span><span class="clock">13:30</span></div>
+        <p>출발 3시간 전 반납이 안전합니다. 반납 영업소에서 공항까지는 무료 셔틀 5~10분. 주유는 반납 영업소 인근 주유소에서 마지막에 채우고, 영수증을 보관하세요. 국제선 체크인 카운터는 국내선 청사와 떨어져 있으니 셔틀 하차 지점을 미리 확인해 두면 좋습니다.</p>
+        <div class="chips"><span class="chip walk">도보 0분 · 셔틀</span><span class="chip">만탱크 반납</span></div>
+      </li>
+    </ul>
+  </article>
+</section>
+
+<section>
+  <p class="sec-label">예산</p>
+  <h2>현지 경비 120만 원 배분</h2>
+  <p class="sec-note">4인 합계 · 항공권 제외 · <span class="num">1엔 = 8.7원</span> 환산</p>
+  <div class="receipt">
+    <ul class="receipt-rows">
+      <li class="row"><span class="what">숙박<span class="sub">차탄 콘도형 4인 1실 · 3박</span></span><span class="lead"></span><span class="yen num">¥36,000</span><span class="won num">313,000원</span></li>
+      <li class="row"><span class="what">렌터카<span class="sub">소형 SUV · 3일 · 면책보험+NOC 포함</span></span><span class="lead"></span><span class="yen num">¥24,000</span><span class="won num">209,000원</span></li>
+      <li class="row"><span class="what">유류 · 주차 · 톨게이트<span class="sub">총 주행 약 340km</span></span><span class="lead"></span><span class="yen num">¥8,000</span><span class="won num">70,000원</span></li>
+      <li class="row"><span class="what">식비<span class="sub">조식 3회 숙소 · 점심 4 · 저녁 3</span></span><span class="lead"></span><span class="yen num">¥38,000</span><span class="won num">331,000원</span></li>
+      <li class="row"><span class="what">입장료<span class="sub">츄라우미 · 오션타워 · 부세나 · 파인애플파크</span></span><span class="lead"></span><span class="yen num">¥21,000</span><span class="won num">183,000원</span></li>
+      <li class="row"><span class="what">통신<span class="sub">eSIM 2회선 + 테더링</span></span><span class="lead"></span><span class="yen num">—</span><span class="won num">40,000원</span></li>
+      <li class="row"><span class="what">예비비<span class="sub">기념품 · 간식 · 환율 변동</span></span><span class="lead"></span><span class="yen num">—</span><span class="won num">54,000원</span></li>
+      <li class="row total"><span class="what">현지 경비 합계</span><span class="lead"></span><span class="yen num"></span><span class="won num">1,200,000원</span></li>
+    </ul>
+    <p class="receipt-note">여기에 인천–나하 왕복 항공권 4인 <span class="num">70만~100만 원</span>이 더해집니다. 항공권을 1인 20만 원 이하로 확보하면 <b>총 여행비 약 200만 원</b> 선에서 정리됩니다.</p>
+  </div>
+</section>
+
+<section>
+  <p class="sec-label">조정</p>
+  <h2>예산이 넘칠 때 먼저 덜어낼 것</h2>
+  <ul class="levers">
+    <li><b>부세나 해중 전망탑 → 만좌모 전망대</b>로 교체. 주차료만 내고 코끼리코 바위를 봅니다. 다만 데크까지 평지 도보 8분이 필요합니다. <span class="save">−7만 원</span></li>
+    <li><b>나고 파인애플 파크 생략.</b> 셋째 날을 두 곳으로 줄이면 체력에도 유리합니다. <span class="save">−3.5만 원</span></li>
+    <li><b>렌터카 3일 → 2일.</b> 마지막 날은 숙소 셔틀·공항 리무진으로 대체. 단 이 조건에서는 우미카지 테라스를 포기해야 합니다. <span class="save">−7만 원</span></li>
+    <li><b>저녁 3회 중 2회를 이온·마트 도시락으로.</b> 오키나와 마트 회 도시락과 튀김은 저녁 대용으로 충분합니다. <span class="save">−8만 원</span></li>
+    <li><b>츄라우미 사전 할인권</b>을 편의점·온라인에서 미리 발권. 현장가보다 저렴합니다. <span class="save">−1.5만 원</span></li>
+  </ul>
+  <div class="callout">
+    <p><b>다섯 개를 모두 적용하면 약 27만 원이 줄어 현지 경비 93만 원.</b> 여기에 4인 항공 특가 70만 원을 더하면 총액이 163만 원까지 내려옵니다. 총액 120만 원은 그래도 닿지 않는 숫자라는 점은 미리 감안하셔야 합니다.</p>
+  </div>
+</section>
+
+<section>
+  <p class="sec-label">리스크</p>
+  <h2>놓치기 쉬운 것들</h2>
+  <ul class="risks">
+    <li><b>국제운전면허증은 발급받아 두세요.</b> 일본은 제네바 협약국이라 국내 면허증만으로는 렌터카를 인수할 수 없습니다. <b>여권 · 국내 면허증 · 국제운전면허증 3종</b>을 모두 지참해야 하고, 하나라도 없으면 현장에서 예약이 취소됩니다.</li>
+    <li><b>좌측통행 · 우핸들.</b> 첫 30분이 가장 위험합니다. 공항 출발 직후 고속도로 진입 대신 일반도로로 적응 구간을 두세요. 좌회전 시 차선이 좁게 느껴지는 것이 정상입니다.</li>
+    <li><b>11월은 해수욕 시즌이 아닙니다.</b> 수온 23~25도, 대부분 호텔 야외 풀은 운영 종료 또는 온수풀 전환. 아이에게 &lsquo;바다에서 논다&rsquo;고 미리 말해두면 현장에서 실망합니다. 물놀이 기대치는 출발 전에 조정하세요.</li>
+    <li><b>항공권이 예산의 절반입니다.</b> 특가는 보통 출발 2~3개월 전에 풀립니다. 숙소·렌터카보다 항공권을 먼저 확정하고, 그 가격에 맞춰 나머지를 조정하는 순서가 맞습니다.</li>
+    <li><b>렌터카 예약은 &lsquo;면책보험 + NOC 면제&rsquo; 포함가로 비교하세요.</b> 표시가만 싼 상품은 현장에서 보험료가 추가돼 총액이 역전됩니다. 카시트는 6세 미만만 의무이므로 이번 구성에서는 불필요합니다.</li>
+    <li><b>고속도로 톨은 현금 준비.</b> 한국 하이패스 카드가 통용되지 않습니다. ETC 카드를 함께 빌리지 않았다면 동전과 소액권을 차에 두세요.</li>
+  </ul>
+</section>
+
+<footer>
+  <p>가격·요금 근거 (2026-09 확인): 
+  <a href="https://churaumi.okinawa/">츄라우미 수족관 요금</a> 어른 ¥2,180 · 고교생 ¥1,440 · 초중생 ¥710 · 
+  <a href="https://ko.tradingeconomics.com/japan/currency">환율</a> 100엔 = 864.62원(2026-09-04 매매기준율) · 
+  <a href="https://www.kayak.co.kr/">인천–나하 왕복 항공권</a> 이스타 176,413원~ / 제주항공 194,363원~ · 
+  <a href="https://loop.day/magazine/okinawa-rental-car-complete-guide-naha-airport-drive-north-2026">렌터카</a> OTS 면책 포함 1일 ¥8,250~ · 타임즈 경차 24시간 ¥7,590~</p>
+  <p>숙박비·식비는 11월 비수기 기준 추정치이며 실제 견적으로 대체해야 합니다. 요금은 예약 시점에 반드시 재확인하세요.</p>
+</footer>
+
+</div>
+</body>
+</html>
