@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bauhaus Pomodoro Timer</title>
+<title>NIA 강의 타이머 · Pomodoro Timer</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
   :root{
@@ -12,8 +12,9 @@
     --red:#D33F2E;
     --blue:#2D5B88;
     --yellow:#E6A123;
+    --nia:#1B4C9C;      /* NIA 계열 블루 */
     --paper:#FFFFFF;
-    --accent:var(--red);
+    --accent:var(--nia);
   }
   *{box-sizing:border-box;}
   body{
@@ -29,52 +30,77 @@
     display:flex;
     flex-direction:column;
     align-items:center;
-    padding:32px 16px 56px;
+    padding:28px 16px 48px;
   }
   h1,h2,h3,.mono{font-family:'Space Grotesk',sans-serif;}
 
   /* ── 공통 바우하우스 구성요소 ───────────────────────── */
-  .card{
-    background:var(--paper);
-    border:2px solid var(--ink);
-    box-shadow:6px 6px 0 0 var(--ink);
-  }
+  .card{background:var(--paper);border:2px solid var(--ink);box-shadow:6px 6px 0 0 var(--ink);}
   .btn{
-    font-family:'Space Grotesk',sans-serif;
-    font-weight:700;
-    letter-spacing:.06em;
-    text-transform:uppercase;
-    cursor:pointer;
-    border:2px solid var(--ink);
-    background:var(--paper);
-    color:var(--ink);
-    box-shadow:3px 3px 0 0 var(--ink);
-    padding:12px 20px;
-    font-size:14px;
+    font-family:'Space Grotesk',sans-serif;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+    cursor:pointer;border:2px solid var(--ink);background:var(--paper);color:var(--ink);
+    box-shadow:3px 3px 0 0 var(--ink);padding:12px 20px;font-size:14px;
     transition:transform .12s ease, box-shadow .12s ease, background-color .12s ease;
   }
   .btn:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 0 var(--ink);}
   .btn:active{transform:translate(3px,3px);box-shadow:0 0 0 0 var(--ink);}
-  .btn:disabled{opacity:.35;cursor:not-allowed;transform:none;box-shadow:3px 3px 0 0 var(--ink);}
   .btn-primary{background:var(--accent);color:#fff;}
-  .btn:focus-visible{outline:3px solid var(--blue);outline-offset:3px;}
+  .btn:focus-visible,.chip:focus-visible,.mode-btn:focus-visible,.view-btn:focus-visible{outline:3px solid var(--yellow);outline-offset:3px;}
 
-  /* ── 헤더 ─────────────────────────────────────────── */
-  header{width:100%;max-width:880px;display:flex;align-items:center;gap:14px;margin-bottom:28px;}
-  .logo{display:flex;gap:6px;}
-  .logo span{width:18px;height:18px;border:2px solid var(--ink);}
-  .logo .sq{background:var(--red);}
-  .logo .ci{background:var(--blue);border-radius:50%;}
-  .logo .tr{background:var(--yellow);}
-  header h1{font-size:20px;margin:0;letter-spacing:.14em;text-transform:uppercase;}
-  header p{margin:2px 0 0;font-size:12px;color:#555;letter-spacing:.04em;}
+  /* ── 기관 표기 헤더 ───────────────────────────────── */
+  header{
+    width:100%;max-width:900px;background:var(--paper);border:2px solid var(--ink);
+    box-shadow:6px 6px 0 0 var(--ink);padding:14px 18px;margin-bottom:26px;
+    display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+  }
+  .org{display:flex;align-items:center;gap:12px;min-width:0;}
+  #org-logo{width:52px;height:52px;object-fit:contain;display:none;flex:none;}
+  #org-fallback{
+    width:52px;height:52px;flex:none;border:3px solid var(--nia);border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;letter-spacing:.02em;color:var(--nia);
+  }
+  .org-name{font-weight:700;font-size:15px;line-height:1.35;}
+  .org-name small{display:block;font-weight:400;font-size:11px;color:#666;letter-spacing:.04em;}
+  .title-block{margin-left:auto;text-align:right;}
+  .title-block h1{font-size:17px;margin:0;letter-spacing:.12em;text-transform:uppercase;}
+  .title-block p{margin:3px 0 0;font-size:12px;color:#555;}
+  @media (max-width:640px){.title-block{margin-left:0;text-align:left;}}
 
-  main{width:100%;max-width:880px;display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:24px;}
-  @media (max-width:760px){main{grid-template-columns:1fr;}}
+  main{width:100%;max-width:900px;display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:24px;}
+  @media (max-width:780px){main{grid-template-columns:1fr;}}
 
   /* ── 타이머 패널 ──────────────────────────────────── */
-  .timer-panel{padding:28px 24px 24px;display:flex;flex-direction:column;align-items:center;}
-  .modes{display:flex;width:100%;border:2px solid var(--ink);margin-bottom:26px;}
+  .timer-panel{padding:24px 24px 22px;display:flex;flex-direction:column;align-items:center;}
+  .views{display:flex;width:100%;border:2px solid var(--ink);margin-bottom:16px;}
+  .view-btn{
+    flex:1;padding:11px 4px;background:var(--paper);border:0;border-right:2px solid var(--ink);
+    font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:12px;letter-spacing:.08em;
+    text-transform:uppercase;cursor:pointer;color:var(--ink);
+  }
+  .view-btn:last-child{border-right:0;}
+  .view-btn[aria-selected="true"]{background:var(--ink);color:#fff;}
+
+  .presets{display:flex;width:100%;gap:8px;margin-bottom:6px;flex-wrap:wrap;}
+  .chip{
+    flex:1 1 0;min-width:68px;padding:14px 6px;cursor:pointer;
+    border:2px solid var(--ink);background:var(--paper);color:var(--ink);
+    box-shadow:3px 3px 0 0 var(--ink);
+    font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:19px;line-height:1;
+    transition:transform .12s ease, box-shadow .12s ease;
+  }
+  .chip small{display:block;margin-top:5px;font-size:10px;letter-spacing:.1em;color:#777;font-weight:500;}
+  .chip:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 0 var(--ink);}
+  .chip:active{transform:translate(3px,3px);box-shadow:0 0 0 0 var(--ink);}
+  .chip[aria-pressed="true"]{background:var(--accent);color:#fff;}
+  .chip[aria-pressed="true"] small{color:rgba(255,255,255,.8);}
+  .custom-row{display:flex;align-items:center;gap:8px;width:100%;margin:10px 0 0;font-size:13px;}
+  .custom-row input{
+    width:88px;padding:8px;border:2px solid var(--ink);background:var(--sand);
+    font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;text-align:right;color:var(--ink);
+  }
+
+  .modes{display:flex;width:100%;border:2px solid var(--ink);}
   .mode-btn{
     flex:1;padding:10px 4px;background:var(--paper);border:0;border-right:2px solid var(--ink);
     font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:12px;letter-spacing:.08em;
@@ -83,46 +109,48 @@
   .mode-btn:last-child{border-right:0;}
   .mode-btn[aria-selected="true"]{background:var(--accent);color:#fff;}
 
-  .dial{position:relative;width:288px;height:288px;max-width:80vw;max-height:80vw;}
+  .dial{position:relative;width:280px;height:280px;max-width:78vw;max-height:78vw;margin-top:22px;}
   .dial svg{width:100%;height:100%;transform:rotate(-90deg);}
   .track{fill:none;stroke:#E4DFD3;stroke-width:14;}
   .progress{fill:none;stroke:var(--accent);stroke-width:14;stroke-linecap:butt;transition:stroke-dashoffset .35s linear;}
   .dial-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
-  #time{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:60px;line-height:1;font-variant-numeric:tabular-nums;}
-  #phase{margin-top:8px;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#555;}
+  #time{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:58px;line-height:1;font-variant-numeric:tabular-nums;}
+  #time.done{color:var(--red);}
+  #phase{margin-top:8px;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#555;text-align:center;}
   .tomatoes{margin-top:12px;display:flex;gap:6px;}
   .tomatoes i{width:11px;height:11px;border:2px solid var(--ink);border-radius:50%;background:var(--paper);display:block;}
   .tomatoes i.on{background:var(--red);}
 
-  .controls{margin-top:26px;display:flex;gap:12px;flex-wrap:wrap;justify-content:center;}
-  .hint{margin-top:18px;font-size:11px;color:#666;letter-spacing:.03em;text-align:center;}
+  .controls{margin-top:24px;display:flex;gap:12px;flex-wrap:wrap;justify-content:center;}
+  .hint{margin-top:16px;font-size:11px;color:#666;text-align:center;line-height:1.8;}
   kbd{font-family:'Space Grotesk',monospace;border:1px solid var(--ink);padding:1px 5px;font-size:10px;background:#fff;}
 
   /* ── 사이드 패널 ──────────────────────────────────── */
   aside{display:flex;flex-direction:column;gap:24px;}
   .panel{padding:20px;}
-  .panel h2{font-size:13px;letter-spacing:.16em;text-transform:uppercase;margin:0 0 16px;
-    padding-bottom:8px;border-bottom:2px solid var(--ink);}
-  .field{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;font-size:13px;}
+  .panel h2{font-size:13px;letter-spacing:.16em;text-transform:uppercase;margin:0 0 16px;padding-bottom:8px;border-bottom:2px solid var(--ink);}
+  .sub{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#777;margin:18px 0 10px;font-family:'Space Grotesk',sans-serif;font-weight:700;}
+  .sub:first-of-type{margin-top:0;}
+  .field{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:11px;font-size:13px;}
   .field label{color:#333;}
   .field input[type="number"]{
     width:74px;padding:7px 8px;border:2px solid var(--ink);background:var(--sand);
     font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14px;text-align:right;color:var(--ink);
   }
-  .field input[type="checkbox"]{width:18px;height:18px;accent-color:var(--red);cursor:pointer;}
+  .field input[type="text"]{
+    width:130px;padding:7px 8px;border:2px solid var(--ink);background:var(--sand);
+    font-family:inherit;font-size:13px;color:var(--ink);
+  }
+  .field input[type="checkbox"]{width:18px;height:18px;accent-color:var(--nia);cursor:pointer;}
   .stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
   .stat{border:2px solid var(--ink);padding:12px;text-align:center;}
   .stat .num{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:30px;line-height:1;}
   .stat .lbl{margin-top:6px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#555;}
   .stat.red{background:var(--red);color:#fff;}
-  .stat.red .lbl{color:rgba(255,255,255,.85);}
-  .stat.blue{background:var(--blue);color:#fff;}
-  .stat.blue .lbl{color:rgba(255,255,255,.85);}
+  .stat.blue{background:var(--nia);color:#fff;}
+  .stat.red .lbl,.stat.blue .lbl{color:rgba(255,255,255,.85);}
   .task-input{display:flex;gap:8px;}
-  .task-input input[type="text"]{
-    flex:1;min-width:0;padding:9px 10px;border:2px solid var(--ink);background:var(--sand);
-    font-family:inherit;font-size:13px;color:var(--ink);
-  }
+  .task-input input[type="text"]{flex:1;min-width:0;padding:9px 10px;border:2px solid var(--ink);background:var(--sand);font-family:inherit;font-size:13px;color:var(--ink);}
   #task-list{list-style:none;margin:14px 0 0;padding:0;display:flex;flex-direction:column;gap:8px;}
   #task-list li{display:flex;align-items:center;gap:10px;border:2px solid var(--ink);padding:8px 10px;font-size:13px;background:var(--sand);}
   #task-list li.done span{text-decoration:line-through;color:#888;}
@@ -130,27 +158,54 @@
   .icon-btn{border:0;background:none;cursor:pointer;font-size:15px;line-height:1;color:#888;padding:2px 4px;}
   .icon-btn:hover{color:var(--red);}
   .empty{font-size:12px;color:#888;margin:14px 0 0;}
-  footer{margin-top:36px;font-size:11px;color:#777;letter-spacing:.05em;text-align:center;max-width:880px;}
+  footer{margin-top:32px;font-size:11px;color:#777;line-height:1.9;text-align:center;max-width:900px;}
   .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
 </style>
 </head>
 <body>
 
+<!-- 기관·강사 표기: assets/nia-ci.png 에 공식 CI 파일을 넣으면 자동으로 표시된다. -->
 <header>
-  <div class="logo" aria-hidden="true"><span class="sq"></span><span class="ci"></span><span class="tr"></span></div>
-  <div>
-    <h1>Pomodoro Timer</h1>
-    <p>집중 25분 · 짧은 휴식 5분 · 긴 휴식 15분</p>
+  <div class="org">
+    <img id="org-logo" src="assets/nia-ci.png" alt="한국지능정보사회진흥원(NIA) 로고">
+    <div id="org-fallback" aria-hidden="true">NIA</div>
+    <div class="org-name">
+      한국지능정보사회진흥원
+      <small>National Information Society Agency (NIA)</small>
+    </div>
+  </div>
+  <div class="title-block">
+    <h1>Class &amp; Pomodoro Timer</h1>
+    <p id="instructor-line">강의용 타이머</p>
   </div>
 </header>
 
 <main>
   <!-- 타이머 -->
   <section class="card timer-panel">
-    <div class="modes" role="tablist" aria-label="타이머 모드">
-      <button class="mode-btn" role="tab" aria-selected="true"  data-mode="focus">집중</button>
-      <button class="mode-btn" role="tab" aria-selected="false" data-mode="short">짧은 휴식</button>
-      <button class="mode-btn" role="tab" aria-selected="false" data-mode="long">긴 휴식</button>
+    <div class="views" role="tablist" aria-label="타이머 종류">
+      <button class="view-btn" role="tab" aria-selected="true"  data-view="quick">강의 타이머</button>
+      <button class="view-btn" role="tab" aria-selected="false" data-view="pomodoro">포모도로</button>
+    </div>
+
+    <!-- 강의 타이머: 3 / 5 / 10분 프리셋 + 직접 입력 -->
+    <div id="quick-panel" style="width:100%;">
+      <div class="presets" id="presets" role="group" aria-label="시간 프리셋"></div>
+      <div class="custom-row">
+        <label for="in-custom">직접 입력</label>
+        <input type="number" id="in-custom" min="1" max="180" value="15">
+        <span>분</span>
+        <button class="btn" id="apply-custom" style="padding:8px 14px;font-size:12px;box-shadow:2px 2px 0 0 var(--ink);">적용</button>
+      </div>
+    </div>
+
+    <!-- 포모도로: 집중 / 짧은 휴식 / 긴 휴식 -->
+    <div id="pomo-panel" style="width:100%;display:none;">
+      <div class="modes" role="tablist" aria-label="포모도로 단계">
+        <button class="mode-btn" role="tab" aria-selected="true"  data-mode="focus">집중</button>
+        <button class="mode-btn" role="tab" aria-selected="false" data-mode="short">짧은 휴식</button>
+        <button class="mode-btn" role="tab" aria-selected="false" data-mode="long">긴 휴식</button>
+      </div>
     </div>
 
     <div class="dial">
@@ -159,8 +214,8 @@
         <circle class="progress" id="ring" cx="100" cy="100" r="88"></circle>
       </svg>
       <div class="dial-center">
-        <div id="time" role="timer" aria-live="off">25:00</div>
-        <div id="phase">FOCUS</div>
+        <div id="time" role="timer" aria-live="off">03:00</div>
+        <div id="phase">3 MIN</div>
         <div class="tomatoes" id="tomatoes" aria-hidden="true"></div>
       </div>
     </div>
@@ -172,7 +227,8 @@
     </div>
 
     <p class="hint">
-      <kbd>Space</kbd> 시작/일시정지 · <kbd>R</kbd> 리셋 · <kbd>S</kbd> 건너뛰기
+      <kbd>Space</kbd> 시작/일시정지 · <kbd>R</kbd> 리셋 · <kbd>S</kbd> 건너뛰기<br>
+      <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> 프리셋 선택 (강의 타이머)
     </p>
     <p class="sr-only" id="announcer" role="status" aria-live="polite"></p>
   </section>
@@ -181,72 +237,95 @@
     <!-- 설정 -->
     <section class="card panel">
       <h2>설정 / Settings</h2>
-      <div class="field"><label for="in-focus">집중 시간 (분)</label><input type="number" id="in-focus" min="1" max="180" value="25"></div>
-      <div class="field"><label for="in-short">짧은 휴식 (분)</label><input type="number" id="in-short" min="1" max="60" value="5"></div>
-      <div class="field"><label for="in-long">긴 휴식 (분)</label><input type="number" id="in-long" min="1" max="120" value="15"></div>
+
+      <p class="sub">강의 타이머 프리셋 (분)</p>
+      <div class="field"><label for="in-p1">프리셋 1</label><input type="number" id="in-p1" min="1" max="180" value="3"></div>
+      <div class="field"><label for="in-p2">프리셋 2</label><input type="number" id="in-p2" min="1" max="180" value="5"></div>
+      <div class="field"><label for="in-p3">프리셋 3</label><input type="number" id="in-p3" min="1" max="180" value="10"></div>
+      <div class="field"><label for="in-quickstart">프리셋 누르면 바로 시작</label><input type="checkbox" id="in-quickstart" checked></div>
+
+      <p class="sub">포모도로 (분)</p>
+      <div class="field"><label for="in-focus">집중</label><input type="number" id="in-focus" min="1" max="180" value="25"></div>
+      <div class="field"><label for="in-short">짧은 휴식</label><input type="number" id="in-short" min="1" max="60" value="5"></div>
+      <div class="field"><label for="in-long">긴 휴식</label><input type="number" id="in-long" min="1" max="120" value="15"></div>
       <div class="field"><label for="in-interval">긴 휴식 주기 (회)</label><input type="number" id="in-interval" min="2" max="12" value="4"></div>
       <div class="field"><label for="in-auto">다음 단계 자동 시작</label><input type="checkbox" id="in-auto" checked></div>
+
+      <p class="sub">알림 · 표기</p>
       <div class="field"><label for="in-sound">종료 알림음</label><input type="checkbox" id="in-sound" checked></div>
-      <div class="field" style="margin-bottom:0;"><label for="in-notify">데스크톱 알림</label><input type="checkbox" id="in-notify"></div>
+      <div class="field"><label for="in-notify">데스크톱 알림</label><input type="checkbox" id="in-notify"></div>
+      <div class="field" style="margin-bottom:0;"><label for="in-instructor">강사명</label><input type="text" id="in-instructor" maxlength="24" placeholder="예: 홍길동"></div>
     </section>
 
     <!-- 통계 -->
     <section class="card panel">
       <h2>오늘의 기록 / Today</h2>
       <div class="stats">
-        <div class="stat red"><div class="num" id="stat-count">0</div><div class="lbl">Pomodoros</div></div>
-        <div class="stat blue"><div class="num" id="stat-minutes">0</div><div class="lbl">Focus Min</div></div>
+        <div class="stat red"><div class="num" id="stat-count">0</div><div class="lbl">Sessions</div></div>
+        <div class="stat blue"><div class="num" id="stat-minutes">0</div><div class="lbl">Minutes</div></div>
       </div>
     </section>
 
     <!-- 할 일 -->
     <section class="card panel">
-      <h2>할 일 / Tasks</h2>
+      <h2>진행 순서 / Agenda</h2>
       <form class="task-input" id="task-form">
-        <input type="text" id="task-text" placeholder="이번 세션에 할 일" maxlength="80" autocomplete="off">
+        <input type="text" id="task-text" placeholder="예: 조별 토의 (5분)" maxlength="80" autocomplete="off">
         <button class="btn" type="submit" style="padding:9px 14px;">추가</button>
       </form>
       <ul id="task-list"></ul>
-      <p class="empty" id="task-empty">아직 등록한 할 일이 없습니다.</p>
+      <p class="empty" id="task-empty">아직 등록한 항목이 없습니다.</p>
     </section>
   </aside>
 </main>
 
-<footer>설정·기록·할 일은 이 브라우저(localStorage)에만 저장되며 서버로 전송되지 않습니다.</footer>
+<footer>
+  설정·기록·진행 순서는 이 브라우저(localStorage)에만 저장되며 서버로 전송되지 않습니다.<br>
+  본 페이지는 강의 진행을 돕는 보조 도구이며, 기관의 공식 발간물이나 인증물이 아닙니다.
+</footer>
 
 <script>
 (() => {
   'use strict';
 
-  /* ── 상태 ────────────────────────────────────────── */
-  const MODES = {
+  /* ── 상수 ────────────────────────────────────────── */
+  const POMO = {
     focus: { label: '집중',      en: 'FOCUS',       color: '#D33F2E' },
     short: { label: '짧은 휴식', en: 'SHORT BREAK', color: '#2D5B88' },
     long:  { label: '긴 휴식',   en: 'LONG BREAK',  color: '#E6A123' }
   };
-  const STORE_KEY = 'bauhaus-pomodoro-v1';
+  const QUICK_COLOR = '#1B4C9C';
+  const STORE_KEY = 'nia-class-timer-v1';
 
   const defaults = {
+    presets: [3, 5, 10],   // 강의 타이머 기본 단위(분)
+    custom: 15,
+    quickStart: true,
     focus: 25, short: 5, long: 15, interval: 4,
-    auto: true, sound: true, notify: false
+    auto: true, sound: true, notify: false,
+    instructor: ''
   };
 
-  let settings   = { ...defaults };
-  let tasks      = [];
-  let stats      = { date: today(), count: 0, minutes: 0 };
+  /* ── 상태 ────────────────────────────────────────── */
+  let settings  = { ...defaults, presets: [...defaults.presets] };
+  let tasks     = [];
+  let stats     = { date: today(), count: 0, minutes: 0 };
 
-  let mode       = 'focus';
-  let remaining  = settings.focus * 60 * 1000;  // ms
-  let endAt      = 0;      // 실행 중일 때의 종료 시각(ms)
-  let running    = false;
-  let ticker     = null;
-  let completed  = 0;      // 긴 휴식 주기용 집중 완료 횟수
+  let view      = 'quick';       // 'quick' | 'pomodoro'
+  let quickMin  = 3;             // 강의 타이머에서 선택된 분
+  let mode      = 'focus';       // 포모도로 단계
+  let remaining = 3 * 60 * 1000; // ms
+  let endAt     = 0;
+  let running   = false;
+  let ticker    = null;
+  let completed = 0;             // 긴 휴식 주기 계산용 집중 완료 횟수
 
   /* ── DOM ─────────────────────────────────────────── */
   const $ = (id) => document.getElementById(id);
   const timeEl = $('time'), phaseEl = $('phase'), ringEl = $('ring');
   const startBtn = $('start'), resetBtn = $('reset'), skipBtn = $('skip');
-  const tomatoesEl = $('tomatoes'), announcer = $('announcer');
+  const tomatoesEl = $('tomatoes'), announcer = $('announcer'), presetsEl = $('presets');
+  const viewBtns = [...document.querySelectorAll('.view-btn')];
   const modeBtns = [...document.querySelectorAll('.mode-btn')];
   const RING_LEN = 2 * Math.PI * 88;
   ringEl.style.strokeDasharray = RING_LEN;
@@ -266,17 +345,29 @@
     if (!raw) return;
     try {
       const data = JSON.parse(raw) || {};
-      settings = { ...defaults, ...(data.settings || {}) };
-      tasks    = Array.isArray(data.tasks) ? data.tasks : [];
-      const s  = data.stats || {};
-      stats    = (s.date === today())
-        ? { date: s.date, count: s.count | 0, minutes: s.minutes | 0 }
+      const s = data.settings || {};
+      settings = { ...defaults, ...s };
+      settings.presets = (Array.isArray(s.presets) && s.presets.length === 3)
+        ? s.presets.map((v, i) => clamp(v, 1, 180, defaults.presets[i]))
+        : [...defaults.presets];
+      tasks = Array.isArray(data.tasks) ? data.tasks : [];
+      const st = data.stats || {};
+      stats = (st.date === today())
+        ? { date: st.date, count: st.count | 0, minutes: st.minutes | 0 }
         : { date: today(), count: 0, minutes: 0 };
     } catch (_) { /* 손상된 데이터는 기본값 사용 */ }
   }
 
+  const clamp = (v, min, max, fallback) => {
+    const n = Math.round(Number(v));
+    return Number.isFinite(n) ? Math.min(max, Math.max(min, n)) : fallback;
+  };
+
   /* ── 시간 계산 ───────────────────────────────────── */
-  const durationMs = (m) => Math.max(1, settings[m]) * 60 * 1000;
+  function currentMinutes() {
+    return view === 'quick' ? quickMin : Math.max(1, settings[mode]);
+  }
+  const durationMs = () => currentMinutes() * 60 * 1000;
 
   function fmt(ms) {
     const total = Math.max(0, Math.ceil(ms / 1000));
@@ -286,21 +377,65 @@
   }
 
   /* ── 렌더링 ──────────────────────────────────────── */
+  function renderPresets() {
+    if (presetsEl.children.length !== 3) {
+      presetsEl.innerHTML = '';
+      settings.presets.forEach((_, i) => {
+        const b = document.createElement('button');
+        b.className = 'chip';
+        b.type = 'button';
+        b.dataset.idx = String(i);
+        b.addEventListener('click', () => selectPreset(i));
+        presetsEl.appendChild(b);
+      });
+    }
+    [...presetsEl.children].forEach((b, i) => {
+      const min = settings.presets[i];
+      b.innerHTML = '';
+      b.append(document.createTextNode(`${min}분`));
+      const small = document.createElement('small');
+      small.textContent = `${min} MIN`;
+      b.appendChild(small);
+      const on = (view === 'quick' && quickMin === min);
+      b.setAttribute('aria-pressed', String(on));
+      b.setAttribute('aria-label', `${min}분 타이머 선택`);
+    });
+  }
+
   function render() {
     const text = fmt(remaining);
-    timeEl.textContent = text;
-    phaseEl.textContent = MODES[mode].en;
-    document.title = running ? `${text} · ${MODES[mode].label}` : 'Bauhaus Pomodoro Timer';
+    const total = durationMs();
 
-    const total = durationMs(mode);
+    timeEl.textContent = text;
+    timeEl.classList.toggle('done', !running && remaining <= 0);
+
+    if (view === 'quick') {
+      phaseEl.textContent = `${quickMin} MIN`;
+      document.documentElement.style.setProperty('--accent', QUICK_COLOR);
+      tomatoesEl.style.display = 'none';
+    } else {
+      phaseEl.textContent = POMO[mode].en;
+      document.documentElement.style.setProperty('--accent', POMO[mode].color);
+      tomatoesEl.style.display = 'flex';
+    }
+
+    document.title = running
+      ? `${text} · ${view === 'quick' ? quickMin + '분' : POMO[mode].label}`
+      : 'NIA 강의 타이머 · Pomodoro Timer';
+
     const ratio = Math.min(1, Math.max(0, remaining / total));
     ringEl.style.strokeDashoffset = RING_LEN * (1 - ratio);
 
-    document.documentElement.style.setProperty('--accent', MODES[mode].color);
-    startBtn.textContent = running ? '일시정지' : (remaining < total ? '이어서' : '시작');
-    modeBtns.forEach((b) => b.setAttribute('aria-selected', String(b.dataset.mode === mode)));
+    startBtn.textContent = running ? '일시정지' : (remaining > 0 && remaining < total ? '이어서' : '시작');
+    skipBtn.style.display = (view === 'pomodoro') ? '' : 'none';
 
-    // 사이클 표시(토마토)
+    viewBtns.forEach((b) => b.setAttribute('aria-selected', String(b.dataset.view === view)));
+    modeBtns.forEach((b) => b.setAttribute('aria-selected', String(b.dataset.mode === mode)));
+    $('quick-panel').style.display = (view === 'quick') ? '' : 'none';
+    $('pomo-panel').style.display  = (view === 'pomodoro') ? '' : 'none';
+    renderPresets();
+
+    // 포모도로 사이클 표시
     const n = Math.max(2, settings.interval);
     if (tomatoesEl.children.length !== n) {
       tomatoesEl.innerHTML = Array.from({ length: n }, () => '<i></i>').join('');
@@ -311,6 +446,9 @@
 
     $('stat-count').textContent = stats.count;
     $('stat-minutes').textContent = stats.minutes;
+
+    const name = (settings.instructor || '').trim();
+    $('instructor-line').textContent = name ? `강의용 타이머 · 강사 ${name}` : '강의용 타이머';
   }
 
   /* ── 타이머 제어 ─────────────────────────────────── */
@@ -322,9 +460,11 @@
     render();
   }
 
+  function stopTicker() { clearInterval(ticker); ticker = null; running = false; }
+
   function start() {
     if (running) return;
-    if (remaining <= 0) remaining = durationMs(mode);
+    if (remaining <= 0) remaining = durationMs();
     endAt = Date.now() + remaining;
     running = true;
     clearInterval(ticker);
@@ -335,60 +475,100 @@
   function pause() {
     if (!running) return;
     remaining = Math.max(0, endAt - Date.now());
-    running = false;
-    clearInterval(ticker);
-    ticker = null;
+    stopTicker();
     render();
   }
 
   function toggle() { running ? pause() : start(); }
 
   function reset() {
-    running = false;
-    clearInterval(ticker);
-    ticker = null;
-    remaining = durationMs(mode);
+    stopTicker();
+    remaining = durationMs();
+    render();
+  }
+
+  function setView(next) {
+    if (view === next) return;
+    view = next;
+    stopTicker();
+    remaining = durationMs();
     render();
   }
 
   function setMode(next, autoStart) {
     mode = next;
-    running = false;
-    clearInterval(ticker);
-    ticker = null;
-    remaining = durationMs(mode);
+    stopTicker();
+    remaining = durationMs();
     render();
     if (autoStart) start();
   }
 
+  function selectPreset(idx) {
+    const min = settings.presets[idx];
+    if (!min) return;
+    view = 'quick';
+    quickMin = min;
+    stopTicker();
+    remaining = durationMs();
+    render();
+    if (settings.quickStart) start();
+  }
+
+  function applyCustom() {
+    const el = $('in-custom');
+    const v = clamp(el.value, 1, 180, settings.custom);
+    el.value = v;
+    settings.custom = v;
+    save();
+    view = 'quick';
+    quickMin = v;
+    stopTicker();
+    remaining = durationMs();
+    render();
+    if (settings.quickStart) start();
+  }
+
   // 정상 완료: 기록을 남기고 다음 단계로 넘어간다.
   function finish() {
-    clearInterval(ticker);
-    ticker = null;
-    running = false;
+    stopTicker();
+    const finishedMin = currentMinutes();
+
+    if (stats.date !== today()) stats = { date: today(), count: 0, minutes: 0 };
+
+    if (view === 'quick') {
+      stats.count += 1;
+      stats.minutes += finishedMin;
+      save();
+      notify('타이머 종료', `${finishedMin}분 타이머가 끝났습니다.`);
+      beep(true);
+      announcer.textContent = `${finishedMin}분 타이머 종료.`;
+      remaining = 0;
+      render();
+      return;   // 강의 타이머는 자동으로 다음 단계로 넘어가지 않는다.
+    }
 
     if (mode === 'focus') {
       completed += 1;
       stats.count += 1;
-      stats.minutes += settings.focus;
-      if (stats.date !== today()) stats = { date: today(), count: 1, minutes: settings.focus };
+      stats.minutes += finishedMin;
       save();
     }
-
     const next = (mode === 'focus')
       ? (completed % Math.max(2, settings.interval) === 0 ? 'long' : 'short')
       : 'focus';
 
-    notify(`${MODES[mode].label} 종료`, `${MODES[next].label} 시간입니다.`);
+    notify(`${POMO[mode].label} 종료`, `${POMO[next].label} 시간입니다.`);
     beep(mode === 'focus');
-    announcer.textContent = `${MODES[mode].label} 종료. 다음은 ${MODES[next].label}.`;
+    announcer.textContent = `${POMO[mode].label} 종료. 다음은 ${POMO[next].label}.`;
     setMode(next, settings.auto);
   }
 
-  // 건너뛰기: 기록에 반영하지 않고 다음 단계로만 이동한다.
+  // 건너뛰기: 기록에 반영하지 않고 다음 단계로만 이동한다(포모도로 전용).
   function skip() {
+    if (view !== 'pomodoro') return;
+    const n = Math.max(2, settings.interval);
     const next = (mode === 'focus')
-      ? ((completed + 1) % Math.max(2, settings.interval) === 0 ? 'long' : 'short')
+      ? ((completed + 1) % n === 0 ? 'long' : 'short')
       : 'focus';
     if (mode === 'focus') completed += 1;
     setMode(next, false);
@@ -396,14 +576,14 @@
 
   /* ── 알림 ────────────────────────────────────────── */
   let audioCtx = null;
-  function beep(isFocusEnd) {
+  function beep(high) {
     if (!settings.sound) return;
     try {
       const Ctx = window.AudioContext || window.webkitAudioContext;
       if (!Ctx) return;
       audioCtx = audioCtx || new Ctx();
       if (audioCtx.state === 'suspended') audioCtx.resume();
-      const base = isFocusEnd ? 880 : 620;
+      const base = high ? 880 : 620;
       [0, 0.22, 0.44].forEach((offset, i) => {
         const t = audioCtx.currentTime + offset;
         const osc = audioCtx.createOscillator();
@@ -426,7 +606,7 @@
     try { new Notification(title, { body }); } catch (_) {}
   }
 
-  /* ── 할 일 ───────────────────────────────────────── */
+  /* ── 진행 순서(할 일) ────────────────────────────── */
   function renderTasks() {
     const list = $('task-list');
     list.innerHTML = '';
@@ -461,29 +641,49 @@
   startBtn.addEventListener('click', toggle);
   resetBtn.addEventListener('click', reset);
   skipBtn.addEventListener('click', skip);
-  modeBtns.forEach((b) => b.addEventListener('click', () => setMode(b.dataset.mode, false)));
+  $('apply-custom').addEventListener('click', applyCustom);
+  $('in-custom').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); applyCustom(); } });
+  viewBtns.forEach((b) => b.addEventListener('click', () => setView(b.dataset.view)));
+  modeBtns.forEach((b) => b.addEventListener('click', () => { view = 'pomodoro'; setMode(b.dataset.mode, false); }));
 
-  const numFields = { 'in-focus': 'focus', 'in-short': 'short', 'in-long': 'long', 'in-interval': 'interval' };
-  Object.entries(numFields).forEach(([id, key]) => {
+  // 프리셋 값 편집: 실행 중이 아니고 그 프리셋을 쓰는 중이면 즉시 반영한다.
+  [['in-p1', 0], ['in-p2', 1], ['in-p3', 2]].forEach(([id, i]) => {
     const el = $(id);
     el.addEventListener('change', () => {
-      const min = Number(el.min) || 1, max = Number(el.max) || 999;
-      const v = Math.min(max, Math.max(min, Math.round(Number(el.value) || defaults[key])));
+      const before = settings.presets[i];
+      const v = clamp(el.value, 1, 180, defaults.presets[i]);
       el.value = v;
-      settings[key] = v;
+      settings.presets[i] = v;
       save();
-      // 실행 중이 아닌 현재 모드의 길이가 바뀌면 즉시 반영한다.
-      if (!running && key === mode) remaining = durationMs(mode);
+      if (view === 'quick' && quickMin === before) {
+        quickMin = v;
+        if (!running) remaining = durationMs();
+      }
       render();
     });
   });
 
+  const pomoFields = { 'in-focus': 'focus', 'in-short': 'short', 'in-long': 'long', 'in-interval': 'interval' };
+  Object.entries(pomoFields).forEach(([id, key]) => {
+    const el = $(id);
+    el.addEventListener('change', () => {
+      const v = clamp(el.value, Number(el.min) || 1, Number(el.max) || 999, defaults[key]);
+      el.value = v;
+      settings[key] = v;
+      save();
+      if (!running && view === 'pomodoro' && key === mode) remaining = durationMs();
+      render();
+    });
+  });
+
+  $('in-quickstart').addEventListener('change', (e) => { settings.quickStart = e.target.checked; save(); });
   $('in-auto').addEventListener('change', (e) => { settings.auto = e.target.checked; save(); });
   $('in-sound').addEventListener('change', (e) => { settings.sound = e.target.checked; save(); });
+  $('in-instructor').addEventListener('input', (e) => { settings.instructor = e.target.value; save(); render(); });
   $('in-notify').addEventListener('change', async (e) => {
     if (e.target.checked && 'Notification' in window && Notification.permission !== 'granted') {
       const perm = await Notification.requestPermission();
-      if (perm !== 'granted') { e.target.checked = false; }
+      if (perm !== 'granted') e.target.checked = false;
     }
     settings.notify = e.target.checked;
     save();
@@ -506,24 +706,42 @@
     if (e.code === 'Space') { e.preventDefault(); toggle(); }
     else if (e.key === 'r' || e.key === 'R') reset();
     else if (e.key === 's' || e.key === 'S') skip();
+    else if (e.key === '1' || e.key === '2' || e.key === '3') selectPreset(Number(e.key) - 1);
   });
 
   // 탭 복귀 시 실제 경과 시간으로 즉시 보정한다.
   document.addEventListener('visibilitychange', () => { if (!document.hidden && running) tick(); });
 
+  // 공식 CI 파일(assets/nia-ci.png)이 있으면 그것을, 없으면 텍스트 마크를 쓴다.
+  const logo = $('org-logo');
+  const showLogo = () => {
+    if (!logo.naturalWidth) return;
+    logo.style.display = 'block';
+    $('org-fallback').style.display = 'none';
+  };
+  logo.addEventListener('load', showLogo);
+  if (logo.complete) showLogo();   // 스크립트 실행 전에 이미 로드가 끝난 경우
+
   /* ── 초기화 ──────────────────────────────────────── */
   load();
+  $('in-p1').value = settings.presets[0];
+  $('in-p2').value = settings.presets[1];
+  $('in-p3').value = settings.presets[2];
+  $('in-custom').value = settings.custom;
+  $('in-quickstart').checked = settings.quickStart;
   $('in-focus').value = settings.focus;
   $('in-short').value = settings.short;
   $('in-long').value = settings.long;
   $('in-interval').value = settings.interval;
   $('in-auto').checked = settings.auto;
   $('in-sound').checked = settings.sound;
+  $('in-instructor').value = settings.instructor;
   $('in-notify').checked = settings.notify &&
     ('Notification' in window) && Notification.permission === 'granted';
   settings.notify = $('in-notify').checked;
 
-  remaining = durationMs(mode);
+  quickMin = settings.presets[0];
+  remaining = durationMs();
   renderTasks();
   render();
 })();
