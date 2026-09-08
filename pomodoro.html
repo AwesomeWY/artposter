@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bauhaus Pomodoro Timer</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --sand:#F3F0E9;
+    --ink:#1A1A1A;
+    --red:#D33F2E;
+    --blue:#2D5B88;
+    --yellow:#E6A123;
+    --paper:#FFFFFF;
+    --accent:var(--red);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    min-height:100vh;
+    font-family:'Noto Sans KR','Space Grotesk',sans-serif;
+    background-color:var(--sand);
+    background-image:
+      linear-gradient(rgba(26,26,26,.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(26,26,26,.045) 1px, transparent 1px);
+    background-size:32px 32px;
+    color:var(--ink);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:32px 16px 56px;
+  }
+  h1,h2,h3,.mono{font-family:'Space Grotesk',sans-serif;}
+
+  /* ── 공통 바우하우스 구성요소 ───────────────────────── */
+  .card{
+    background:var(--paper);
+    border:2px solid var(--ink);
+    box-shadow:6px 6px 0 0 var(--ink);
+  }
+  .btn{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:700;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    cursor:pointer;
+    border:2px solid var(--ink);
+    background:var(--paper);
+    color:var(--ink);
+    box-shadow:3px 3px 0 0 var(--ink);
+    padding:12px 20px;
+    font-size:14px;
+    transition:transform .12s ease, box-shadow .12s ease, background-color .12s ease;
+  }
+  .btn:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 0 var(--ink);}
+  .btn:active{transform:translate(3px,3px);box-shadow:0 0 0 0 var(--ink);}
+  .btn:disabled{opacity:.35;cursor:not-allowed;transform:none;box-shadow:3px 3px 0 0 var(--ink);}
+  .btn-primary{background:var(--accent);color:#fff;}
+  .btn:focus-visible{outline:3px solid var(--blue);outline-offset:3px;}
+
+  /* ── 헤더 ─────────────────────────────────────────── */
+  header{width:100%;max-width:880px;display:flex;align-items:center;gap:14px;margin-bottom:28px;}
+  .logo{display:flex;gap:6px;}
+  .logo span{width:18px;height:18px;border:2px solid var(--ink);}
+  .logo .sq{background:var(--red);}
+  .logo .ci{background:var(--blue);border-radius:50%;}
+  .logo .tr{background:var(--yellow);}
+  header h1{font-size:20px;margin:0;letter-spacing:.14em;text-transform:uppercase;}
+  header p{margin:2px 0 0;font-size:12px;color:#555;letter-spacing:.04em;}
+
+  main{width:100%;max-width:880px;display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:24px;}
+  @media (max-width:760px){main{grid-template-columns:1fr;}}
+
+  /* ── 타이머 패널 ──────────────────────────────────── */
+  .timer-panel{padding:28px 24px 24px;display:flex;flex-direction:column;align-items:center;}
+  .modes{display:flex;width:100%;border:2px solid var(--ink);margin-bottom:26px;}
+  .mode-btn{
+    flex:1;padding:10px 4px;background:var(--paper);border:0;border-right:2px solid var(--ink);
+    font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:12px;letter-spacing:.08em;
+    text-transform:uppercase;cursor:pointer;color:var(--ink);
+  }
+  .mode-btn:last-child{border-right:0;}
+  .mode-btn[aria-selected="true"]{background:var(--accent);color:#fff;}
+
+  .dial{position:relative;width:288px;height:288px;max-width:80vw;max-height:80vw;}
+  .dial svg{width:100%;height:100%;transform:rotate(-90deg);}
+  .track{fill:none;stroke:#E4DFD3;stroke-width:14;}
+  .progress{fill:none;stroke:var(--accent);stroke-width:14;stroke-linecap:butt;transition:stroke-dashoffset .35s linear;}
+  .dial-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+  #time{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:60px;line-height:1;font-variant-numeric:tabular-nums;}
+  #phase{margin-top:8px;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#555;}
+  .tomatoes{margin-top:12px;display:flex;gap:6px;}
+  .tomatoes i{width:11px;height:11px;border:2px solid var(--ink);border-radius:50%;background:var(--paper);display:block;}
+  .tomatoes i.on{background:var(--red);}
+
+  .controls{margin-top:26px;display:flex;gap:12px;flex-wrap:wrap;justify-content:center;}
+  .hint{margin-top:18px;font-size:11px;color:#666;letter-spacing:.03em;text-align:center;}
+  kbd{font-family:'Space Grotesk',monospace;border:1px solid var(--ink);padding:1px 5px;font-size:10px;background:#fff;}
+
+  /* ── 사이드 패널 ──────────────────────────────────── */
+  aside{display:flex;flex-direction:column;gap:24px;}
+  .panel{padding:20px;}
+  .panel h2{font-size:13px;letter-spacing:.16em;text-transform:uppercase;margin:0 0 16px;
+    padding-bottom:8px;border-bottom:2px solid var(--ink);}
+  .field{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;font-size:13px;}
+  .field label{color:#333;}
+  .field input[type="number"]{
+    width:74px;padding:7px 8px;border:2px solid var(--ink);background:var(--sand);
+    font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14px;text-align:right;color:var(--ink);
+  }
+  .field input[type="checkbox"]{width:18px;height:18px;accent-color:var(--red);cursor:pointer;}
+  .stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .stat{border:2px solid var(--ink);padding:12px;text-align:center;}
+  .stat .num{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:30px;line-height:1;}
+  .stat .lbl{margin-top:6px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#555;}
+  .stat.red{background:var(--red);color:#fff;}
+  .stat.red .lbl{color:rgba(255,255,255,.85);}
+  .stat.blue{background:var(--blue);color:#fff;}
+  .stat.blue .lbl{color:rgba(255,255,255,.85);}
+  .task-input{display:flex;gap:8px;}
+  .task-input input[type="text"]{
+    flex:1;min-width:0;padding:9px 10px;border:2px solid var(--ink);background:var(--sand);
+    font-family:inherit;font-size:13px;color:var(--ink);
+  }
+  #task-list{list-style:none;margin:14px 0 0;padding:0;display:flex;flex-direction:column;gap:8px;}
+  #task-list li{display:flex;align-items:center;gap:10px;border:2px solid var(--ink);padding:8px 10px;font-size:13px;background:var(--sand);}
+  #task-list li.done span{text-decoration:line-through;color:#888;}
+  #task-list li span{flex:1;min-width:0;word-break:break-word;}
+  .icon-btn{border:0;background:none;cursor:pointer;font-size:15px;line-height:1;color:#888;padding:2px 4px;}
+  .icon-btn:hover{color:var(--red);}
+  .empty{font-size:12px;color:#888;margin:14px 0 0;}
+  footer{margin-top:36px;font-size:11px;color:#777;letter-spacing:.05em;text-align:center;max-width:880px;}
+  .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo" aria-hidden="true"><span class="sq"></span><span class="ci"></span><span class="tr"></span></div>
+  <div>
+    <h1>Pomodoro Timer</h1>
+    <p>집중 25분 · 짧은 휴식 5분 · 긴 휴식 15분</p>
+  </div>
+</header>
+
+<main>
+  <!-- 타이머 -->
+  <section class="card timer-panel">
+    <div class="modes" role="tablist" aria-label="타이머 모드">
+      <button class="mode-btn" role="tab" aria-selected="true"  data-mode="focus">집중</button>
+      <button class="mode-btn" role="tab" aria-selected="false" data-mode="short">짧은 휴식</button>
+      <button class="mode-btn" role="tab" aria-selected="false" data-mode="long">긴 휴식</button>
+    </div>
+
+    <div class="dial">
+      <svg viewBox="0 0 200 200" aria-hidden="true">
+        <circle class="track" cx="100" cy="100" r="88"></circle>
+        <circle class="progress" id="ring" cx="100" cy="100" r="88"></circle>
+      </svg>
+      <div class="dial-center">
+        <div id="time" role="timer" aria-live="off">25:00</div>
+        <div id="phase">FOCUS</div>
+        <div class="tomatoes" id="tomatoes" aria-hidden="true"></div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="btn btn-primary" id="start">시작</button>
+      <button class="btn" id="reset">리셋</button>
+      <button class="btn" id="skip">건너뛰기</button>
+    </div>
+
+    <p class="hint">
+      <kbd>Space</kbd> 시작/일시정지 · <kbd>R</kbd> 리셋 · <kbd>S</kbd> 건너뛰기
+    </p>
+    <p class="sr-only" id="announcer" role="status" aria-live="polite"></p>
+  </section>
+
+  <aside>
+    <!-- 설정 -->
+    <section class="card panel">
+      <h2>설정 / Settings</h2>
+      <div class="field"><label for="in-focus">집중 시간 (분)</label><input type="number" id="in-focus" min="1" max="180" value="25"></div>
+      <div class="field"><label for="in-short">짧은 휴식 (분)</label><input type="number" id="in-short" min="1" max="60" value="5"></div>
+      <div class="field"><label for="in-long">긴 휴식 (분)</label><input type="number" id="in-long" min="1" max="120" value="15"></div>
+      <div class="field"><label for="in-interval">긴 휴식 주기 (회)</label><input type="number" id="in-interval" min="2" max="12" value="4"></div>
+      <div class="field"><label for="in-auto">다음 단계 자동 시작</label><input type="checkbox" id="in-auto" checked></div>
+      <div class="field"><label for="in-sound">종료 알림음</label><input type="checkbox" id="in-sound" checked></div>
+      <div class="field" style="margin-bottom:0;"><label for="in-notify">데스크톱 알림</label><input type="checkbox" id="in-notify"></div>
+    </section>
+
+    <!-- 통계 -->
+    <section class="card panel">
+      <h2>오늘의 기록 / Today</h2>
+      <div class="stats">
+        <div class="stat red"><div class="num" id="stat-count">0</div><div class="lbl">Pomodoros</div></div>
+        <div class="stat blue"><div class="num" id="stat-minutes">0</div><div class="lbl">Focus Min</div></div>
+      </div>
+    </section>
+
+    <!-- 할 일 -->
+    <section class="card panel">
+      <h2>할 일 / Tasks</h2>
+      <form class="task-input" id="task-form">
+        <input type="text" id="task-text" placeholder="이번 세션에 할 일" maxlength="80" autocomplete="off">
+        <button class="btn" type="submit" style="padding:9px 14px;">추가</button>
+      </form>
+      <ul id="task-list"></ul>
+      <p class="empty" id="task-empty">아직 등록한 할 일이 없습니다.</p>
+    </section>
+  </aside>
+</main>
+
+<footer>설정·기록·할 일은 이 브라우저(localStorage)에만 저장되며 서버로 전송되지 않습니다.</footer>
+
+<script>
+(() => {
+  'use strict';
+
+  /* ── 상태 ────────────────────────────────────────── */
+  const MODES = {
+    focus: { label: '집중',      en: 'FOCUS',       color: '#D33F2E' },
+    short: { label: '짧은 휴식', en: 'SHORT BREAK', color: '#2D5B88' },
+    long:  { label: '긴 휴식',   en: 'LONG BREAK',  color: '#E6A123' }
+  };
+  const STORE_KEY = 'bauhaus-pomodoro-v1';
+
+  const defaults = {
+    focus: 25, short: 5, long: 15, interval: 4,
+    auto: true, sound: true, notify: false
+  };
+
+  let settings   = { ...defaults };
+  let tasks      = [];
+  let stats      = { date: today(), count: 0, minutes: 0 };
+
+  let mode       = 'focus';
+  let remaining  = settings.focus * 60 * 1000;  // ms
+  let endAt      = 0;      // 실행 중일 때의 종료 시각(ms)
+  let running    = false;
+  let ticker     = null;
+  let completed  = 0;      // 긴 휴식 주기용 집중 완료 횟수
+
+  /* ── DOM ─────────────────────────────────────────── */
+  const $ = (id) => document.getElementById(id);
+  const timeEl = $('time'), phaseEl = $('phase'), ringEl = $('ring');
+  const startBtn = $('start'), resetBtn = $('reset'), skipBtn = $('skip');
+  const tomatoesEl = $('tomatoes'), announcer = $('announcer');
+  const modeBtns = [...document.querySelectorAll('.mode-btn')];
+  const RING_LEN = 2 * Math.PI * 88;
+  ringEl.style.strokeDasharray = RING_LEN;
+
+  /* ── 저장 / 복원 ─────────────────────────────────── */
+  function today() { return new Date().toISOString().slice(0, 10); }
+
+  function save() {
+    try {
+      localStorage.setItem(STORE_KEY, JSON.stringify({ settings, tasks, stats }));
+    } catch (_) { /* 시크릿 모드 등에서 저장 실패는 무시 */ }
+  }
+
+  function load() {
+    let raw = null;
+    try { raw = localStorage.getItem(STORE_KEY); } catch (_) { return; }
+    if (!raw) return;
+    try {
+      const data = JSON.parse(raw) || {};
+      settings = { ...defaults, ...(data.settings || {}) };
+      tasks    = Array.isArray(data.tasks) ? data.tasks : [];
+      const s  = data.stats || {};
+      stats    = (s.date === today())
+        ? { date: s.date, count: s.count | 0, minutes: s.minutes | 0 }
+        : { date: today(), count: 0, minutes: 0 };
+    } catch (_) { /* 손상된 데이터는 기본값 사용 */ }
+  }
+
+  /* ── 시간 계산 ───────────────────────────────────── */
+  const durationMs = (m) => Math.max(1, settings[m]) * 60 * 1000;
+
+  function fmt(ms) {
+    const total = Math.max(0, Math.ceil(ms / 1000));
+    const mm = String(Math.floor(total / 60)).padStart(2, '0');
+    const ss = String(total % 60).padStart(2, '0');
+    return `${mm}:${ss}`;
+  }
+
+  /* ── 렌더링 ──────────────────────────────────────── */
+  function render() {
+    const text = fmt(remaining);
+    timeEl.textContent = text;
+    phaseEl.textContent = MODES[mode].en;
+    document.title = running ? `${text} · ${MODES[mode].label}` : 'Bauhaus Pomodoro Timer';
+
+    const total = durationMs(mode);
+    const ratio = Math.min(1, Math.max(0, remaining / total));
+    ringEl.style.strokeDashoffset = RING_LEN * (1 - ratio);
+
+    document.documentElement.style.setProperty('--accent', MODES[mode].color);
+    startBtn.textContent = running ? '일시정지' : (remaining < total ? '이어서' : '시작');
+    modeBtns.forEach((b) => b.setAttribute('aria-selected', String(b.dataset.mode === mode)));
+
+    // 사이클 표시(토마토)
+    const n = Math.max(2, settings.interval);
+    if (tomatoesEl.children.length !== n) {
+      tomatoesEl.innerHTML = Array.from({ length: n }, () => '<i></i>').join('');
+    }
+    // 긴 휴식 중에는 직전 사이클을 모두 채운 상태로 보여준다.
+    const filled = (mode === 'long' && completed > 0 && completed % n === 0) ? n : completed % n;
+    [...tomatoesEl.children].forEach((el, i) => el.classList.toggle('on', i < filled));
+
+    $('stat-count').textContent = stats.count;
+    $('stat-minutes').textContent = stats.minutes;
+  }
+
+  /* ── 타이머 제어 ─────────────────────────────────── */
+  // setInterval 누적 오차와 백그라운드 스로틀링을 피하려고
+  // 종료 시각(endAt)을 기준으로 남은 시간을 매 틱 재계산한다.
+  function tick() {
+    remaining = endAt - Date.now();
+    if (remaining <= 0) { remaining = 0; finish(); return; }
+    render();
+  }
+
+  function start() {
+    if (running) return;
+    if (remaining <= 0) remaining = durationMs(mode);
+    endAt = Date.now() + remaining;
+    running = true;
+    clearInterval(ticker);
+    ticker = setInterval(tick, 250);
+    render();
+  }
+
+  function pause() {
+    if (!running) return;
+    remaining = Math.max(0, endAt - Date.now());
+    running = false;
+    clearInterval(ticker);
+    ticker = null;
+    render();
+  }
+
+  function toggle() { running ? pause() : start(); }
+
+  function reset() {
+    running = false;
+    clearInterval(ticker);
+    ticker = null;
+    remaining = durationMs(mode);
+    render();
+  }
+
+  function setMode(next, autoStart) {
+    mode = next;
+    running = false;
+    clearInterval(ticker);
+    ticker = null;
+    remaining = durationMs(mode);
+    render();
+    if (autoStart) start();
+  }
+
+  // 정상 완료: 기록을 남기고 다음 단계로 넘어간다.
+  function finish() {
+    clearInterval(ticker);
+    ticker = null;
+    running = false;
+
+    if (mode === 'focus') {
+      completed += 1;
+      stats.count += 1;
+      stats.minutes += settings.focus;
+      if (stats.date !== today()) stats = { date: today(), count: 1, minutes: settings.focus };
+      save();
+    }
+
+    const next = (mode === 'focus')
+      ? (completed % Math.max(2, settings.interval) === 0 ? 'long' : 'short')
+      : 'focus';
+
+    notify(`${MODES[mode].label} 종료`, `${MODES[next].label} 시간입니다.`);
+    beep(mode === 'focus');
+    announcer.textContent = `${MODES[mode].label} 종료. 다음은 ${MODES[next].label}.`;
+    setMode(next, settings.auto);
+  }
+
+  // 건너뛰기: 기록에 반영하지 않고 다음 단계로만 이동한다.
+  function skip() {
+    const next = (mode === 'focus')
+      ? ((completed + 1) % Math.max(2, settings.interval) === 0 ? 'long' : 'short')
+      : 'focus';
+    if (mode === 'focus') completed += 1;
+    setMode(next, false);
+  }
+
+  /* ── 알림 ────────────────────────────────────────── */
+  let audioCtx = null;
+  function beep(isFocusEnd) {
+    if (!settings.sound) return;
+    try {
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) return;
+      audioCtx = audioCtx || new Ctx();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const base = isFocusEnd ? 880 : 620;
+      [0, 0.22, 0.44].forEach((offset, i) => {
+        const t = audioCtx.currentTime + offset;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(base + i * 110, t);
+        gain.gain.setValueAtTime(0.0001, t);
+        gain.gain.exponentialRampToValueAtTime(0.25, t + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.2);
+        osc.connect(gain).connect(audioCtx.destination);
+        osc.start(t);
+        osc.stop(t + 0.22);
+      });
+    } catch (_) { /* 오디오 차단 환경은 무시 */ }
+  }
+
+  function notify(title, body) {
+    if (!settings.notify) return;
+    if (!('Notification' in window) || Notification.permission !== 'granted') return;
+    try { new Notification(title, { body }); } catch (_) {}
+  }
+
+  /* ── 할 일 ───────────────────────────────────────── */
+  function renderTasks() {
+    const list = $('task-list');
+    list.innerHTML = '';
+    $('task-empty').style.display = tasks.length ? 'none' : 'block';
+
+    tasks.forEach((task, idx) => {
+      const li = document.createElement('li');
+      if (task.done) li.className = 'done';
+
+      const cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.checked = task.done;
+      cb.setAttribute('aria-label', `${task.text} 완료 표시`);
+      cb.addEventListener('change', () => { tasks[idx].done = cb.checked; save(); renderTasks(); });
+
+      const span = document.createElement('span');
+      span.textContent = task.text;   // textContent 사용 → HTML 주입 불가
+
+      const del = document.createElement('button');
+      del.className = 'icon-btn';
+      del.type = 'button';
+      del.textContent = '×';
+      del.setAttribute('aria-label', `${task.text} 삭제`);
+      del.addEventListener('click', () => { tasks.splice(idx, 1); save(); renderTasks(); });
+
+      li.append(cb, span, del);
+      list.appendChild(li);
+    });
+  }
+
+  /* ── 이벤트 바인딩 ───────────────────────────────── */
+  startBtn.addEventListener('click', toggle);
+  resetBtn.addEventListener('click', reset);
+  skipBtn.addEventListener('click', skip);
+  modeBtns.forEach((b) => b.addEventListener('click', () => setMode(b.dataset.mode, false)));
+
+  const numFields = { 'in-focus': 'focus', 'in-short': 'short', 'in-long': 'long', 'in-interval': 'interval' };
+  Object.entries(numFields).forEach(([id, key]) => {
+    const el = $(id);
+    el.addEventListener('change', () => {
+      const min = Number(el.min) || 1, max = Number(el.max) || 999;
+      const v = Math.min(max, Math.max(min, Math.round(Number(el.value) || defaults[key])));
+      el.value = v;
+      settings[key] = v;
+      save();
+      // 실행 중이 아닌 현재 모드의 길이가 바뀌면 즉시 반영한다.
+      if (!running && key === mode) remaining = durationMs(mode);
+      render();
+    });
+  });
+
+  $('in-auto').addEventListener('change', (e) => { settings.auto = e.target.checked; save(); });
+  $('in-sound').addEventListener('change', (e) => { settings.sound = e.target.checked; save(); });
+  $('in-notify').addEventListener('change', async (e) => {
+    if (e.target.checked && 'Notification' in window && Notification.permission !== 'granted') {
+      const perm = await Notification.requestPermission();
+      if (perm !== 'granted') { e.target.checked = false; }
+    }
+    settings.notify = e.target.checked;
+    save();
+  });
+
+  $('task-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const input = $('task-text');
+    const text = input.value.trim();
+    if (!text) return;
+    tasks.push({ text, done: false });
+    input.value = '';
+    save();
+    renderTasks();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    const tag = (e.target.tagName || '').toLowerCase();
+    if (tag === 'input' || tag === 'textarea') return;   // 입력 중에는 단축키를 막는다
+    if (e.code === 'Space') { e.preventDefault(); toggle(); }
+    else if (e.key === 'r' || e.key === 'R') reset();
+    else if (e.key === 's' || e.key === 'S') skip();
+  });
+
+  // 탭 복귀 시 실제 경과 시간으로 즉시 보정한다.
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && running) tick(); });
+
+  /* ── 초기화 ──────────────────────────────────────── */
+  load();
+  $('in-focus').value = settings.focus;
+  $('in-short').value = settings.short;
+  $('in-long').value = settings.long;
+  $('in-interval').value = settings.interval;
+  $('in-auto').checked = settings.auto;
+  $('in-sound').checked = settings.sound;
+  $('in-notify').checked = settings.notify &&
+    ('Notification' in window) && Notification.permission === 'granted';
+  settings.notify = $('in-notify').checked;
+
+  remaining = durationMs(mode);
+  renderTasks();
+  render();
+})();
+</script>
+</body>
+</html>
