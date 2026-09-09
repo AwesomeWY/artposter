@@ -1,4 +1,80 @@
-<!DOCTYPE html>
+#!/usr/bin/env node
+/**
+ * apps/<slug>/ 를 스캔해서 저장소 루트의 index.html(허브 페이지)을 다시 생성한다.
+ * 의존성 없음.  실행: node scripts/build-index.mjs
+ */
+import { readdirSync, readFileSync, writeFileSync, statSync, existsSync } from "node:fs";
+import { join, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
+const APPS_DIR = join(ROOT, "apps");
+
+const esc = (s) =>
+  String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+
+function readApps() {
+  if (!existsSync(APPS_DIR)) return [];
+  return readdirSync(APPS_DIR)
+    .filter((slug) => !slug.startsWith(".") && !slug.startsWith("_"))
+    .filter((slug) => statSync(join(APPS_DIR, slug)).isDirectory())
+    .map((slug) => {
+      const metaPath = join(APPS_DIR, slug, "app.json");
+      let meta = {};
+      if (existsSync(metaPath)) {
+        try {
+          meta = JSON.parse(readFileSync(metaPath, "utf8"));
+        } catch (err) {
+          console.warn(`[build-index] ${slug}/app.json 파싱 실패: ${err.message}`);
+        }
+      }
+      const entry = meta.entry || "index.html";
+      // app.json에 title이 없으면 진입 HTML의 <title>에서 추론한다.
+      let title = meta.title;
+      if (!title) {
+        const entryPath = join(APPS_DIR, slug, entry);
+        if (existsSync(entryPath)) {
+          const m = readFileSync(entryPath, "utf8").match(/<title>([^<]*)<\/title>/i);
+          if (m) title = m[1].trim();
+        }
+      }
+      return {
+        slug,
+        title: title || slug,
+        description: meta.description || "",
+        emoji: meta.emoji || "📦",
+        tags: Array.isArray(meta.tags) ? meta.tags : [],
+        status: meta.status || "active",
+        created: meta.created || "",
+        entry,
+        hasEntry: existsSync(join(APPS_DIR, slug, entry)),
+      };
+    })
+    .sort((a, b) => (b.created || "").localeCompare(a.created || "") || a.slug.localeCompare(b.slug));
+}
+
+function card(app) {
+  const href = app.hasEntry ? `apps/${app.slug}/${app.entry}` : `apps/${app.slug}/`;
+  const tags = app.tags.map((t) => `<span class="tag">${esc(t)}</span>`).join("");
+  return `      <a class="card" href="${esc(href)}">
+        <div class="card-top">
+          <span class="emoji">${esc(app.emoji)}</span>
+          <span class="status status-${esc(app.status)}">${esc(app.status)}</span>
+        </div>
+        <h2>${esc(app.title)}</h2>
+        <p>${esc(app.description || "설명이 아직 없습니다. apps/" + app.slug + "/app.json 을 채워 주세요.")}</p>
+        <div class="meta">
+          <code>apps/${esc(app.slug)}/</code>${app.created ? `<time>${esc(app.created)}</time>` : ""}
+        </div>
+        ${tags ? `<div class="tags">${tags}</div>` : ""}
+      </a>`;
+}
+
+function render(apps) {
+  const cards = apps.length
+    ? apps.map(card).join("\n")
+    : `      <p class="empty">아직 등록된 앱이 없습니다. <code>./scripts/new-app.sh &lt;슬러그&gt;</code> 로 첫 폴더를 만들어 보세요.</p>`;
+  return `<!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -57,21 +133,10 @@
     <header>
       <div class="bars"><i></i><i></i><i></i></div>
       <h1>artposter</h1>
-      <p class="sub">앱 1개 · 모든 코드는 <code>apps/&lt;슬러그&gt;/</code> 폴더 단위로 관리됩니다.</p>
+      <p class="sub">앱 ${apps.length}개 · 모든 코드는 <code>apps/&lt;슬러그&gt;/</code> 폴더 단위로 관리됩니다.</p>
     </header>
     <main class="grid">
-      <a class="card" href="apps/bauhaus-poster/index.html">
-        <div class="card-top">
-          <span class="emoji">🎨</span>
-          <span class="status status-active">active</span>
-        </div>
-        <h2>Wanderlust Bauhaus Poster Maker</h2>
-        <p>바우하우스 스타일의 여행 포스터를 브라우저에서 바로 만들고 저장하는 단일 페이지 도구</p>
-        <div class="meta">
-          <code>apps/bauhaus-poster/</code><time>2026-09-07</time>
-        </div>
-        <div class="tags"><span class="tag">poster</span><span class="tag">bauhaus</span><span class="tag">design</span><span class="tag">tailwind</span></div>
-      </a>
+${cards}
     </main>
     <footer>
       <span>자동 생성: scripts/build-index.mjs</span>
@@ -80,3 +145,9 @@
   </div>
 </body>
 </html>
+`;
+}
+
+const apps = readApps();
+writeFileSync(join(ROOT, "index.html"), render(apps), "utf8");
+console.log(`[build-index] index.html 생성 완료 — 앱 ${apps.length}개: ${apps.map((a) => a.slug).join(", ") || "(없음)"}`);

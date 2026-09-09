@@ -1,0 +1,9 @@
+{
+  "title": "Wanderlust Bauhaus Poster Maker",
+  "description": "바우하우스 스타일의 여행 포스터를 브라우저에서 바로 만들고 저장하는 단일 페이지 도구",
+  "emoji": "🎨",
+  "tags": ["poster", "bauhaus", "design", "tailwind"],
+  "status": "active",
+  "created": "2026-09-07",
+  "entry": "index.html"
+}
